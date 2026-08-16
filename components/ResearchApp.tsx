@@ -10,9 +10,39 @@ export function ResearchApp() {
       <h1 style={{ fontSize: 18, margin: "8px 0" }}>Six metro working women leave Myntra to decide if it will fit</h1>
       <p>
         Segment: women 24–32 in Bengaluru, Mumbai, Delhi, Pune, Hyderabad, Gurugram. Weekly Myntra use. 15+ wishlist
-        items. Mix of workwear and occasion. Discussion guide: why saved, still intend, blockers, info gaps,
-        alternatives, outside-app loop, how they reduce uncertainty.
+        items. Mix of workwear and occasion.
       </p>
+      <h2 style={{ fontSize: 16, margin: "20px 0 8px" }}>What changed after the interviews</h2>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Hypothesis from WhyWait</th>
+            <th>What interviews did</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Fit is the legal #1</td>
+            <td>Confirmed — but the failure is specifically <b>at revisit</b>. PDP advice does not travel with the heart.</td>
+          </tr>
+          <tr>
+            <td>Return/seal-tag is co-primary</td>
+            <td>Confirmed as time-cost and money-loss, not policy trivia. Sneha will pay full price if the Sunday is safe.</td>
+          </tr>
+          <tr>
+            <td>Sale-wait is the frequent #1</td>
+            <td>Priya named sale as <b>risk-offset</b>, not greed. Still illegal to ship. Do not confuse with the job.</td>
+          </tr>
+          <tr>
+            <td>Bookmarks pollute the funnel</td>
+            <td>Kavya: ~10 of 96 items were ever intent. Converting her is a false north star.</td>
+          </tr>
+          <tr>
+            <td>Comparison is secondary</td>
+            <td>Meera will buy one of three trousers if compared on fit, not discount.</td>
+          </tr>
+        </tbody>
+      </table>
       <h2 style={{ fontSize: 16, margin: "20px 0 8px" }}>Synthesis</h2>
       <ul>
         <li>

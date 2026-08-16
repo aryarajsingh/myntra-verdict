@@ -1,5 +1,5 @@
-import { WishlistHome } from "@/components/WishlistHome";
+import { CaseHub } from "@/components/CaseHub";
 
 export default function Page() {
-  return <WishlistHome />;
+  return <CaseHub />;
 }

@@ -10,8 +10,8 @@ const assistant = Assistant({
 });
 
 export const metadata = {
-  title: "Verdict — Myntra concept prototype",
-  description: "Wishlist decision layer. Not the Myntra app.",
+  title: "Verdict — Myntra Growth case",
+  description: "Wishlist-to-purchase in 30 days. Concept prototype. Not the Myntra app.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { productById, PRODUCTS } from "@/data/products";
+import { ProductArt } from "./ProductArt";
 import { PolicyChip, StatusChip } from "./StatusChip";
 import { DEFAULT_STATE, effectiveBucket, loadState } from "@/lib/state";
 import { useEffect, useState } from "react";
@@ -31,7 +32,7 @@ export function CompareView() {
           {cols.map((p, i) => (
             <div key={p.id} className="col">
               {i === 0 ? <p className="chip chip-policy">THIS ONE</p> : null}
-              <img src={p.image} alt="" style={{ height: 120, objectFit: "cover", width: "100%" }} />
+              <ProductArt product={p} />
               <p style={{ fontWeight: 700, marginTop: 8 }}>{p.brand}</p>
               <p>{p.name}</p>
               <StatusChip bucket={effectiveBucket(p.id, state)} />

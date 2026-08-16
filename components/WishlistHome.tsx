@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { PRODUCTS } from "@/data/products";
 import type { Bucket, Profile } from "@/data/types";
+import { ProductArt } from "./ProductArt";
 import { PolicyChip, StatusChip } from "./StatusChip";
 import { DEFAULT_STATE, DEMO_PROFILE, effectiveBucket, loadState, saveState, track, type AppState } from "@/lib/state";
 
@@ -257,7 +258,7 @@ export function WishlistHome() {
                 {items.length === 0 ? <p style={{ marginTop: 8 }}>Nothing in this group right now.</p> : null}
                 {items.map(({ p, bucket, inBag }) => (
                   <article key={p.id} className="wl-card">
-                    <img src={p.image} alt={`${p.brand} ${p.name}`} />
+                    <ProductArt product={p} />
                     <div>
                       <StatusChip bucket={bucket} />
                       <p style={{ fontWeight: 600, marginTop: 6 }}>{p.brand}</p>

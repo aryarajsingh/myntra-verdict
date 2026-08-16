@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { productById, PRODUCTS } from "@/data/products";
+import { ProductArt } from "./ProductArt";
 import { PolicyChip, StatusChip } from "./StatusChip";
 import { DEFAULT_STATE, DEMO_PROFILE, effectiveBucket, loadState, saveState, track, type AppState } from "@/lib/state";
 
@@ -58,7 +59,7 @@ export function ItemVerdict() {
     return (
       <div className="app-shell pad">
         <p>Item not found.</p>
-        <Link href="/">Back to wishlist</Link>
+        <Link href="/wishlist">Back to wishlist</Link>
       </div>
     );
   }
@@ -113,7 +114,7 @@ export function ItemVerdict() {
   return (
     <div className="app-shell">
       <header className="header">
-        <button className="icon-btn" type="button" onClick={() => router.push("/")} aria-label="Back">
+        <button className="icon-btn" type="button" onClick={() => router.push("/wishlist")} aria-label="Back">
           ←
         </button>
         <h1>{product.brand}</h1>
@@ -122,13 +123,13 @@ export function ItemVerdict() {
           {state.bag.length ? <span className="bag-count">{state.bag.length}</span> : null}
         </Link>
       </header>
-      <img className="hero-img" src={product.image} alt={`${product.brand} ${product.name}`} />
+      <ProductArt product={product} tall />
       <div className="pad">
         {locked ? (
           <div className="lock">
             <b>Verdict is locked</b>
             <p>Add usual sizes to see a fit read.</p>
-            <Link href="/" className="primary">
+            <Link href="/wishlist" className="primary">
               Set my sizes
             </Link>
           </div>
@@ -236,7 +237,7 @@ export function ItemVerdict() {
         <div className="compare" style={{ marginTop: 8 }}>
           {substitutes.map((s) => (
             <div key={s.id} className="col">
-              <img src={s.image} alt="" style={{ height: 80, width: "100%", objectFit: "cover" }} />
+              <ProductArt product={s} />
               <StatusChip bucket={effectiveBucket(s.id, state)} />
               <p style={{ fontWeight: 600, marginTop: 8 }}>{s.brand}</p>
               <p>{s.name}</p>
@@ -396,7 +397,7 @@ export function ItemVerdict() {
                     setSheet(null);
                     setToast("Moved to Still exploring. It’s still in your wishlist.");
                     track("not_for_me", { style_id: product.id });
-                    router.push("/");
+                    router.push("/wishlist");
                   }}
                 >
                   Move this item

@@ -10,20 +10,20 @@ After GitHub Pages is live:
 
 | Artefact | URL |
 |---|---|
-| MVP | https://aryarajsingh.github.io/myntra-verdict/ |
-| Discovery engine | https://aryarajsingh.github.io/myntra-verdict/discovery/ |
+| Case hub (start here) | https://aryarajsingh.github.io/myntra-verdict/ |
+| WhyWait discovery engine | https://aryarajsingh.github.io/myntra-verdict/discovery/ |
+| Verdict MVP | https://aryarajsingh.github.io/myntra-verdict/wishlist/ |
 | Research | https://aryarajsingh.github.io/myntra-verdict/research/ |
 | Deck (web) | https://aryarajsingh.github.io/myntra-verdict/deck/ |
 | Deck (PDF) | https://aryarajsingh.github.io/myntra-verdict/Verdict-Wishlist-Deck.pdf |
 
 ## How to test
 
-1. Open `/`. Complete sizes (or skip). Default analog: tops M, bottoms M, ethnic L, height 5'2"–5'5", regular.
-2. Wishlist is grouped **Ready / Check fit / Still exploring** (words + shape, not colour alone).
-3. Open a Check fit item (ONLY cropped blazer or Libas Anarkali). Read fit analog, return policy, compare, Ask a doubt.
-4. Seal-tag saree stays in Still exploring — no bag push.
-5. Open `/discovery`. Rank table, click a barrier for quotes, Compare fit vs EORS wait, paste a review into Classify.
-6. Open `/deck` → Print → Save as PDF, landscape. All type is 14pt. No fellow name.
+1. Open the case hub. Read the bet in 30 seconds.
+2. **WhyWait:** Re-run pipeline → Ranked bets → 2×2 → Try a review (Fit freeze / Return fear / EORS / Bookmark).
+3. **Verdict:** Wishlist opens with demo sizes. Pink **See Verdict** on Ready / Check fit. Seal-tag stays in Still exploring.
+4. Open ONLY cropped blazer or Libas Anarkali for the full decision object.
+5. Deck: 10 slides, 14pt, landscape. Print or PDF.
 
 ## WhyWait (1-slide)
 

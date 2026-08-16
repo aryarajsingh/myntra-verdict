@@ -50,7 +50,7 @@ export function DeckApp() {
             <p style={{ fontWeight: 700 }}>Verdict</p>
             <p>Wishlist decision layer (concept prototype)</p>
             <p style={{ marginTop: 12 }}>
-              Live: <Link href="/">wishlist MVP</Link>, <Link href="/discovery">WhyWait engine</Link>,{" "}
+              Live: <Link href="/wishlist">Verdict MVP</Link>, <Link href="/discovery">WhyWait engine</Link>,{" "}
               <Link href="/research">six interviews</Link>,{" "}
               <a href={`${base}/Verdict-Wishlist-Deck.pdf`}>this deck (PDF)</a>.
             </p>
@@ -380,7 +380,7 @@ export function DeckApp() {
           </tbody>
         </table>
         <p style={{ marginTop: 12 }}>
-          Prototype: <Link href="/">Wishlist MVP</Link> · Onboarding (sizes, height, fit pref, no photo) · item Verdict ·
+          Prototype: <Link href="/wishlist">Verdict MVP</Link> · demo sizes loaded · item Verdict ·
           compare · Ask a doubt (precomputed) · bag (no checkout). Engine: <Link href="/discovery">WhyWait</Link>.
         </p>
         <Foot n={8} />

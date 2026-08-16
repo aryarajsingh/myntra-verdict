@@ -746,6 +746,294 @@ p {
   }
 }
 
+.hub {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  background: var(--page);
+  min-height: calc(100vh - 32px);
+}
+
+.hub-kicker {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.hub-title {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+  max-width: 40em;
+}
+
+.hub-lede {
+  margin-top: 12px;
+  max-width: 46em;
+}
+
+.hub-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.hub-actions a {
+  width: auto;
+  min-width: 160px;
+}
+
+.hub-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.hub-card,
+.hub-bet {
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.hub-bet {
+  margin-top: 16px;
+}
+
+.hub-bet h2 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.hub-funnel {
+  padding-left: 18px;
+  margin: 8px 0;
+}
+
+.hub-funnel .on {
+  font-weight: 700;
+}
+
+.why-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 24px 24px 0;
+}
+
+.pipe {
+  list-style: none;
+  padding: 16px 24px 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.pipe li {
+  border: 1px solid var(--hairline);
+  padding: 12px;
+  border-radius: 8px;
+  min-height: 96px;
+}
+
+.pipe li b {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.pipe .now {
+  border-color: var(--ink);
+}
+
+.pipe .done {
+  background: var(--page-sunken);
+  border-left: 3px solid var(--ink);
+}
+
+.callout {
+  margin: 16px 24px 0;
+  border: 1px solid var(--ink);
+  padding: 12px 16px;
+}
+
+.inkbar {
+  height: 8px;
+  margin-top: 4px;
+  background: var(--ink);
+  opacity: 0.25;
+}
+
+.matrix {
+  position: relative;
+  height: 360px;
+  border: 1px solid var(--ink);
+  margin: 24px 0 8px;
+  background: repeating-linear-gradient(
+    to right,
+    transparent,
+    transparent calc(25% - 1px),
+    var(--hairline) 25%
+  );
+}
+
+.mx-dot {
+  position: absolute;
+  border: 1.5px solid var(--ink);
+  background: #fff;
+  border-radius: 50%;
+  transform: translate(-50%, 50%);
+  cursor: pointer;
+  padding: 0;
+}
+
+.mx-dot span {
+  position: absolute;
+  left: 110%;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.mx-pick {
+  background: var(--ink);
+}
+
+.mx-pick span {
+  color: var(--ink);
+}
+
+.mx-disq {
+  border-style: dashed;
+}
+
+.mx-x,
+.mx-y {
+  position: absolute;
+  font-weight: 600;
+}
+
+.mx-x {
+  bottom: 4px;
+  left: 8px;
+}
+
+.mx-y {
+  top: 8px;
+  left: 8px;
+}
+
+.gart {
+  position: relative;
+  width: 96px;
+  height: 128px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.gart-tall {
+  width: 100%;
+  height: 280px;
+}
+
+.gart-meta {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  color: #fff;
+  font-size: 12px;
+  line-height: 16px;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.45);
+}
+
+.gart-meta b {
+  display: block;
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.gart-cut {
+  position: absolute;
+  inset: 18% 22% 28%;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 2px 2px 40% 40%;
+}
+
+.gart-shirt .gart-cut {
+  border-radius: 12px 12px 4px 4px;
+  clip-path: polygon(20% 0, 80% 0, 100% 18%, 100% 100%, 0 100%, 0 18%);
+}
+
+.gart-trousers .gart-cut {
+  clip-path: polygon(15% 0, 85% 0, 100% 100%, 55% 100%, 50% 30%, 45% 100%, 0 100%);
+  border: 0;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.gart-kurta .gart-cut {
+  border-radius: 8px 8px 28px 28px;
+}
+
+.gart-dress .gart-cut {
+  clip-path: polygon(30% 0, 70% 0, 100% 100%, 0 100%);
+  border: 0;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.compare .gart,
+.col .gart,
+.wl-card .gart {
+  flex-shrink: 0;
+}
+
+.compare .gart,
+.col .gart {
+  width: 100%;
+  height: 140px;
+}
+
+.wide-shell .why-head,
+.wide-shell .pipe,
+.wide-shell .callout,
+.wide-shell .kpi,
+.wide-shell .filters,
+.wide-shell .table,
+.wide-shell .card,
+.wide-shell p,
+.wide-shell h2 {
+  max-width: none;
+}
+
+.wide-shell .kpi,
+.wide-shell .filters,
+.wide-shell .table,
+.wide-shell h2,
+.wide-shell > .main {
+  margin-left: 24px;
+  margin-right: 24px;
+}
+
+.wide-shell {
+  padding-bottom: 48px;
+}
+
+@media (max-width: 900px) {
+  .hub-grid,
+  .pipe {
+    grid-template-columns: 1fr;
+  }
+  .why-head {
+    flex-direction: column;
+  }
+}
+
 @media print {
   @page {
     size: A4 landscape;

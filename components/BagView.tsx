@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { PRODUCTS } from "@/data/products";
+import { ProductArt } from "./ProductArt";
 import { DEFAULT_STATE, loadState, type AppState } from "@/lib/state";
 
 export function BagView() {
@@ -15,7 +16,7 @@ export function BagView() {
   return (
     <div className="app-shell">
       <header className="header">
-        <Link href="/" className="icon-btn" aria-label="Back">
+        <Link href="/wishlist" className="icon-btn" aria-label="Back">
           ←
         </Link>
         <h1>Bag</h1>
@@ -26,7 +27,7 @@ export function BagView() {
         {lines.length === 0 ? <p style={{ marginTop: 16 }}>Bag is empty. Add a size from Verdict first.</p> : null}
         {lines.map((l) => (
           <article key={l.id} className="wl-card" style={{ marginTop: 12 }}>
-            <img src={l.p!.image} alt="" />
+            <ProductArt product={l.p!} />
             <div>
               <p style={{ fontWeight: 600 }}>{l.p!.brand}</p>
               <p>{l.p!.name}</p>
@@ -39,7 +40,7 @@ export function BagView() {
         <button className="primary" type="button" disabled>
           Checkout isn’t part of this prototype
         </button>
-        <Link href="/" className="ghost">
+        <Link href="/wishlist" className="ghost">
           Back to wishlist
         </Link>
       </div>
