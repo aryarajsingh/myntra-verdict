@@ -69,48 +69,21 @@ export function WishlistHome() {
     return (
       <div className="app-shell">
         <header className="header">
-          <button className="icon-btn" type="button" onClick={() => (step === 1 ? setStep(0) : setStep((step - 1) as 1))}>
+          <button
+            className="icon-btn"
+            type="button"
+            onClick={() => setStep(step === 2 ? 0 : ((step - 1) as 2 | 3))}
+            aria-label="Back"
+          >
             {step === 1 ? "×" : "←"}
           </button>
           <h1>{step === 1 ? "Verdict" : step === 2 ? "Your usual sizes" : step === 3 ? "Your height" : "How you like clothes to sit"}</h1>
           <span className="icon-btn" />
         </header>
         <div className="pad">
-          {step === 1 && (
-            <>
-              <p className="muted">Verdict</p>
-              <h2 style={{ fontSize: 18, margin: "8px 0" }}>
-                Know if a saved piece is likely to work on you — before you bag it.
-              </h2>
-              <p>
-                Verdict reads how this cut has sat on shoppers close to your size, and whether sending it back is
-                straightforward. It is a read of reviews and return rules. Not a fitting room. Not a guarantee.
-              </p>
-              <ul>
-                <li>No photo needed. We don’t try clothes on a picture of you.</li>
-                <li>Usual sizes, height band, how you like clothes to sit. That’s it.</li>
-                <li>We’ll stay cautious when reviews disagree.</li>
-              </ul>
-              <button className="primary" type="button" onClick={() => setStep(2)}>
-                Continue
-              </button>
-              <button
-                className="ghost"
-                type="button"
-                onClick={() => {
-                  persist({ ...state, skipped: true });
-                  setStep(0);
-                  track("onboarding_skipped");
-                }}
-              >
-                Skip for now
-              </button>
-              <p className="muted">You can still open your wishlist. Verdict stays locked till sizes are in.</p>
-            </>
-          )}
           {step === 2 && (
             <>
-              <p className="muted">Step 2 of 4</p>
+              <p className="muted">Step 1 of 3</p>
               <h2 style={{ fontSize: 18, margin: "8px 0" }}>What do you usually pick?</h2>
               <p>Ethnicwear often runs differently from tops. That’s why we ask three times.</p>
               {(
@@ -151,7 +124,7 @@ export function WishlistHome() {
           )}
           {step === 3 && (
             <>
-              <p className="muted">Step 3 of 4</p>
+              <p className="muted">Step 2 of 3</p>
               <h2 style={{ fontSize: 18, margin: "8px 0" }}>Which band are you in?</h2>
               <p>Used for length, crop, and palazzo/kurta rise — not to judge anyone.</p>
               <div style={{ marginTop: 12 }}>
@@ -174,7 +147,7 @@ export function WishlistHome() {
           )}
           {step === 4 && (
             <>
-              <p className="muted">Step 4 of 4</p>
+              <p className="muted">Step 3 of 3</p>
               <h2 style={{ fontSize: 18, margin: "8px 0" }}>What’s your default?</h2>
               <p>We’ll flag a bodycon if you prefer relaxed, and a boxy shirt if you prefer fitted. You can still buy either.</p>
               <div style={{ marginTop: 12 }}>
@@ -225,6 +198,7 @@ export function WishlistHome() {
     <div className="app-shell">
       <Header bagCount={state.bag.length} />
       <div className="pad">
+        <p className="eval-strip">MVP · You are a shopper. Open <b>See Verdict</b> on a Check fit item (blazer or Anarkali).</p>
         <p className="muted">{visible.length} saved</p>
         <p style={{ margin: "4px 0 8px", fontWeight: 700 }}>
           Each card has a Verdict: Ready, Check fit, or Still exploring.

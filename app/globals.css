@@ -786,11 +786,37 @@ p {
   min-width: 160px;
 }
 
-.hub-grid {
+.deliverables {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
-  margin-top: 32px;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.del-card {
+  border: 1px solid var(--ink);
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.del-card h2 {
+  font-size: 16px;
+}
+
+.del-card .primary,
+.del-card .secondary {
+  margin-top: auto;
+}
+
+.eval-strip {
+  background: var(--page-sunken);
+  border: 1px solid var(--hairline);
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-radius: 4px;
 }
 
 .hub-card,
@@ -1026,6 +1052,7 @@ p {
 
 @media (max-width: 900px) {
   .hub-grid,
+  .deliverables,
   .pipe {
     grid-template-columns: 1fr;
   }

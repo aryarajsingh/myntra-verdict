@@ -6,12 +6,23 @@ import { OPPORTUNITIES } from "@/data/opportunities";
 export function ResearchApp() {
   return (
     <div className="wide-shell" style={{ padding: 24 }}>
-      <p className="chip chip-explore">PRIMARY RESEARCH</p>
+      <p className="hub-kicker">Supporting artefact · primary research</p>
       <h1 style={{ fontSize: 18, margin: "8px 0" }}>Six metro working women leave Myntra to decide if it will fit</h1>
       <p>
-        Segment: women 24–32 in Bengaluru, Mumbai, Delhi, Pune, Hyderabad, Gurugram. Weekly Myntra use. 15+ wishlist
-        items. Mix of workwear and occasion.
+        6 interviews, 35–45 minutes. Screener: woman 24–32, metro, Myntra at least weekly, 15+ items currently
+        wishlisted, mixed workwear and occasion. Guide below. Full notes after the synthesis.
       </p>
+      <h2 style={{ fontSize: 16, margin: "20px 0 8px" }}>Discussion guide</h2>
+      <ol>
+        <li>Walk me through the last three things you hearted. Why that one, that day?</li>
+        <li>Do you still intend to buy it in the next month? What would make that a no?</li>
+        <li>What is stopping you — fit, price, occasion, quality, returns, just saving?</li>
+        <li>What information do you still need that the app does not give you on the wishlist?</li>
+        <li>Are you comparing it with other saved pieces? How do you choose?</li>
+        <li>What happens outside Myntra before you decide (WhatsApp, hauls, store, Google)?</li>
+        <li>How do you reduce the risk of a wrong size today?</li>
+        <li>If returns were painful last time, how did that change what you save vs buy?</li>
+      </ol>
       <h2 style={{ fontSize: 16, margin: "20px 0 8px" }}>What changed after the interviews</h2>
       <table className="table">
         <thead>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { CORPUS, quotesFor } from "@/data/corpus";
 import { OPPORTUNITIES } from "@/data/opportunities";
 import { SAMPLE_QUOTES, classifyText, type Classification } from "@/lib/classify";
@@ -15,32 +15,16 @@ const STEPS = [
 ];
 
 export function DiscoveryApp() {
-  const [phase, setPhase] = useState(0);
+  const [phase, setPhase] = useState(4);
   const [running, setRunning] = useState(false);
   const [tab, setTab] = useState<"rank" | "matrix" | "evidence" | "compare" | "try" | "method">("rank");
   const [picked, setPicked] = useState<BarrierId>("fit_uncertainty");
   const [left, setLeft] = useState<BarrierId>("fit_uncertainty");
   const [right, setRight] = useState<BarrierId>("budget_sale_wait");
   const [paste, setPaste] = useState(SAMPLE_QUOTES[0].text);
-  const [result, setResult] = useState<Classification | null>(null);
+  const [result, setResult] = useState<Classification | null>(() => classifyText(SAMPLE_QUOTES[0].text));
   const [sourceFilter, setSourceFilter] = useState("All");
   const stats = corpusStats();
-
-  useEffect(() => {
-    setRunning(true);
-    setPhase(0);
-    const id = window.setInterval(() => {
-      setPhase((p) => {
-        if (p >= 4) {
-          window.clearInterval(id);
-          setRunning(false);
-          return 4;
-        }
-        return p + 1;
-      });
-    }, 420);
-    return () => window.clearInterval(id);
-  }, []);
 
   const sources = useMemo(() => ["All", ...Array.from(new Set(CORPUS.map((c) => c.source)))], []);
   const evidence = quotesFor(picked).filter((q) => sourceFilter === "All" || q.source === sourceFilter);
@@ -57,13 +41,13 @@ export function DiscoveryApp() {
     <div className="wide-shell">
       <div className="why-head">
         <div>
-          <p className="hub-kicker">WhyWait · discovery engine</p>
+          <p className="hub-kicker">Deliverable 1 · AI discovery engine</p>
           <h1 className="hub-title" style={{ fontSize: 18 }}>
-            Why they wait — scored against 30-day wishlist purchase, not stars
+            WhyWait — why a saved item is not purchased in 30 days
           </h1>
-          <p className="muted">
-            {stats.n} quotes · {stats.genuinePct}% genuine intent · {stats.offPct}% leave the app to decide. No API key.
-            Paste a review and watch it hit the metric tree.
+          <p>
+            Not star ratings. Each quote is coded, then opportunities are scored against the business metric. Sale-wait
+            is ranked and refused. Test: open <b>Try a review</b>, or use the sample buttons.
           </p>
         </div>
         <button

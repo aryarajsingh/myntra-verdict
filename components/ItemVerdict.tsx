@@ -125,15 +125,6 @@ export function ItemVerdict() {
       </header>
       <ProductArt product={product} tall />
       <div className="pad">
-        {locked ? (
-          <div className="lock">
-            <b>Verdict is locked</b>
-            <p>Add usual sizes to see a fit read.</p>
-            <Link href="/wishlist" className="primary">
-              Set my sizes
-            </Link>
-          </div>
-        ) : null}
         {state.overrides[product.id]?.disagreed ? (
           <div className="lock">
             <b>You flagged this read.</b>

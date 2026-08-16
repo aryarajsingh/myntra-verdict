@@ -1,9 +1,8 @@
 "use client";
 
-import Link from "next/link";
+import { LINKS } from "@/lib/links";
 
 const FOOT = "CONCEPT · Verdict · NextLeap case · Not the Myntra app";
-const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
 function Foot({ n }: { n: number }) {
   return (
@@ -19,7 +18,7 @@ export function DeckApp() {
       <div className="print-bar no-print">
         <span>10 slides · 14pt · File → Print → Save as PDF (landscape)</span>
         <span>
-          <a href={`${base}/Verdict-Wishlist-Deck.pdf`} className="secondary" style={{ width: "auto", display: "inline-flex" }}>
+          <a href={LINKS.pdf} className="secondary" style={{ width: "auto", display: "inline-flex" }}>
             Download PDF
           </a>{" "}
           <button className="secondary" type="button" style={{ width: "auto" }} onClick={() => window.print()}>
@@ -47,14 +46,17 @@ export function DeckApp() {
             </p>
           </div>
           <div className="box">
-            <p style={{ fontWeight: 700 }}>Verdict</p>
-            <p>Wishlist decision layer (concept prototype)</p>
-            <p style={{ marginTop: 12 }}>
-              Live: <Link href="/wishlist">Verdict MVP</Link>, <Link href="/discovery">WhyWait engine</Link>,{" "}
-              <Link href="/research">six interviews</Link>,{" "}
-              <a href={`${base}/Verdict-Wishlist-Deck.pdf`}>this deck (PDF)</a>.
+            <p style={{ fontWeight: 700 }}>Submit these three</p>
+            <p>
+              <a href={LINKS.discovery}>1. Discovery engine</a>
             </p>
-            <p style={{ marginTop: 12 }}>Not the Myntra app. Eval only.</p>
+            <p>
+              <a href={LINKS.mvp}>2. Deployed MVP</a>
+            </p>
+            <p>
+              <a href={LINKS.pdf}>3. This deck (PDF)</a>
+            </p>
+            <p style={{ marginTop: 12 }}>Concept prototype. Not the Myntra app. No login.</p>
           </div>
         </div>
         <Foot n={1} />
@@ -139,12 +141,17 @@ export function DeckApp() {
             </p>
           </div>
           <div className="box">
-            <p style={{ fontWeight: 700 }}>Test the engine</p>
+            <p style={{ fontWeight: 700 }}>Test this slide</p>
             <p>
-              Open <Link href="/discovery">/discovery</Link>
+              <a href="https://aryarajsingh.github.io/myntra-verdict/discovery/">
+                github.io/myntra-verdict/discovery
+              </a>
             </p>
-            <p>Rank table · evidence quotes · compare two barriers · paste a review</p>
-            <p style={{ marginTop: 12 }}>Runs with no API key. Taxonomy classifier you can try live.</p>
+            <p>Ranked bets · 2×2 · compare fit vs EORS · Try a review (Fit / Return / Sale / Bookmark)</p>
+            <p style={{ marginTop: 12 }}>
+              Works with no API key. Same nine opportunities as this table. A 5-star “sized up” is still fit
+              uncertainty.
+            </p>
           </div>
         </div>
         <Foot n={3} />
@@ -278,7 +285,7 @@ export function DeckApp() {
           </tbody>
         </table>
         <p style={{ marginTop: 12 }}>
-          Full notes: <Link href="/research">/research</Link>. They do not need a coupon. They need a decision object.
+          Full notes: <a href={LINKS.research}>interview notes</a>. They do not need a coupon. They need a decision object.
         </p>
         <Foot n={5} />
       </section>
@@ -380,8 +387,8 @@ export function DeckApp() {
           </tbody>
         </table>
         <p style={{ marginTop: 12 }}>
-          Prototype: <Link href="/wishlist">Verdict MVP</Link> · demo sizes loaded · item Verdict ·
-          compare · Ask a doubt (precomputed) · bag (no checkout). Engine: <Link href="/discovery">WhyWait</Link>.
+          Prototype: <a href={LINKS.mvp}>MVP</a> · demo sizes loaded · See Verdict on Check fit. Engine:{" "}
+          <a href={LINKS.discovery}>WhyWait</a>.
         </p>
         <Foot n={8} />
       </section>
