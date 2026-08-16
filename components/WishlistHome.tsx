@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { PRODUCTS } from "@/data/products";
 import type { Bucket, Profile } from "@/data/types";
 import { PolicyChip, StatusChip } from "./StatusChip";
-import { effectiveBucket, loadState, saveState, track, type AppState } from "@/lib/state";
+import { DEFAULT_STATE, DEMO_PROFILE, effectiveBucket, loadState, saveState, track, type AppState } from "@/lib/state";
 
 const TOPS = ["XS", "S", "M", "L", "XL", "XXL"];
 const HEIGHTS = [
@@ -35,23 +35,18 @@ function Header({ bagCount }: { bagCount: number }) {
 }
 
 export function WishlistHome() {
-  const [state, setState] = useState<AppState | null>(null);
+  const [state, setState] = useState<AppState>(DEFAULT_STATE);
   const [step, setStep] = useState<0 | 1 | 2 | 3 | 4>(0);
-  const [draft, setDraft] = useState<Partial<Profile>>({
-    top: "M",
-    bottom: "M",
-    ethnic: "L",
-    height: "5'2\" – 5'5\"",
-    fitPref: "Regular",
-  });
+  const [draft, setDraft] = useState<Partial<Profile>>(DEMO_PROFILE);
   const [filter, setFilter] = useState<"all" | Bucket>("all");
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
     const s = loadState();
-    setState(s);
-    if (!s.profile && !s.skipped) setStep(1);
-    else setStep(0);
+    const next = { ...s, profile: s.profile ?? DEMO_PROFILE };
+    saveState(next);
+    setState(next);
+    setStep(0);
     track("wishlist_viewed");
   }, []);
 
@@ -68,8 +63,6 @@ export function WishlistHome() {
       inBag: state.overrides[p.id]?.inBag,
     }));
   }, [state]);
-
-  if (!state) return <div className="app-shell pad">Loading…</div>;
 
   if (step >= 1 && step <= 4) {
     return (
@@ -232,24 +225,17 @@ export function WishlistHome() {
       <Header bagCount={state.bag.length} />
       <div className="pad">
         <p className="muted">{visible.length} saved</p>
-        <p style={{ margin: "4px 0 12px" }}>Grouped by how ready each piece looks for you — not by discount.</p>
-        {!state.profile ? (
-          <div className="lock">
-            <b>Verdict is locked</b>
-            <p>Add usual sizes to see which saved pieces look workable.</p>
-            <button className="primary" type="button" style={{ marginTop: 8 }} onClick={() => setStep(2)}>
-              Set my sizes
-            </button>
-          </div>
-        ) : (
-          <p className="muted">
-            Profile · Tops {state.profile.top} · Bottoms {state.profile.bottom} · Ethnic {state.profile.ethnic} ·{" "}
-            {state.profile.height} · {state.profile.fitPref} ·{" "}
-            <button className="text-btn" type="button" onClick={() => setStep(2)}>
-              Edit sizes
-            </button>
-          </p>
-        )}
+        <p style={{ margin: "4px 0 8px", fontWeight: 700 }}>
+          Each card has a Verdict: Ready, Check fit, or Still exploring.
+        </p>
+        <p style={{ margin: "0 0 12px" }}>Grouped by how ready each piece looks for you — not by discount.</p>
+        <p className="muted">
+          Demo profile · Tops {state.profile?.top} · Bottoms {state.profile?.bottom} · Ethnic {state.profile?.ethnic} ·{" "}
+          {state.profile?.height} · {state.profile?.fitPref} ·{" "}
+          <button className="text-btn" type="button" onClick={() => setStep(2)}>
+            Edit sizes
+          </button>
+        </p>
         <div className="filters">
           {(["all", "ready", "check_fit", "exploring"] as const).map((f) => (
             <button key={f} type="button" className={`filter ${filter === f ? "on" : ""}`} onClick={() => setFilter(f)}>
@@ -281,7 +267,7 @@ export function WishlistHome() {
                       <PolicyChip policy={p.returnClass} />
                       <p style={{ margin: "8px 0" }}>{p.fitLine}</p>
                       {inBag ? <p className="chip chip-policy">IN BAG</p> : null}
-                      <Link href={`/item/${p.id}`} className="secondary" style={{ marginTop: 8 }}>
+                      <Link href={`/item/${p.id}`} className="primary" style={{ marginTop: 8 }}>
                         {bucket === "exploring" ? "See why it’s here" : "See Verdict"}
                       </Link>
                     </div>

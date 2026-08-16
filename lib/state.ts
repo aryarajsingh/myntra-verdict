@@ -3,7 +3,15 @@
 import type { Bucket, Profile } from "@/data/types";
 import { PRODUCTS } from "@/data/products";
 
-const KEY = "verdict-state-v1";
+const KEY = "verdict-state-v2";
+
+export const DEMO_PROFILE: Profile = {
+  top: "M",
+  bottom: "M",
+  ethnic: "L",
+  height: "5'2\" – 5'5\"",
+  fitPref: "Regular",
+};
 
 export type ItemOverride = {
   bucket?: Bucket;
@@ -19,13 +27,26 @@ export type AppState = {
   overrides: Record<string, ItemOverride>;
 };
 
-const DEFAULT: AppState = { profile: null, skipped: false, bag: [], overrides: {} };
+export const DEFAULT_STATE: AppState = {
+  profile: DEMO_PROFILE,
+  skipped: false,
+  bag: [],
+  overrides: {},
+};
+
+const DEFAULT = DEFAULT_STATE;
 
 function read(): AppState {
   if (typeof window === "undefined") return DEFAULT;
   try {
     const raw = localStorage.getItem(KEY);
-    return raw ? { ...DEFAULT, ...JSON.parse(raw) } : DEFAULT;
+    if (!raw) return DEFAULT;
+    const parsed = JSON.parse(raw) as AppState;
+    return {
+      ...DEFAULT,
+      ...parsed,
+      profile: parsed.profile ?? DEMO_PROFILE,
+    };
   } catch {
     return DEFAULT;
   }

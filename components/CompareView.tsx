@@ -4,16 +4,16 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { productById, PRODUCTS } from "@/data/products";
 import { PolicyChip, StatusChip } from "./StatusChip";
-import { effectiveBucket, loadState } from "@/lib/state";
+import { DEFAULT_STATE, effectiveBucket, loadState } from "@/lib/state";
 import { useEffect, useState } from "react";
 import type { AppState } from "@/lib/state";
 
 export function CompareView() {
   const { id } = useParams<{ id: string }>();
   const origin = productById(id);
-  const [state, setState] = useState<AppState | null>(null);
+  const [state, setState] = useState<AppState>(DEFAULT_STATE);
   useEffect(() => setState(loadState()), []);
-  if (!origin || !state) return <div className="app-shell pad">Loading…</div>;
+  if (!origin) return <div className="app-shell pad">Loading…</div>;
   const cols = [origin, ...origin.substitutes.map((s) => PRODUCTS.find((p) => p.id === s)!).filter(Boolean)].slice(0, 3);
 
   return (

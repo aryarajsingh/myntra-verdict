@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { productById, PRODUCTS } from "@/data/products";
 import { PolicyChip, StatusChip } from "./StatusChip";
-import { effectiveBucket, loadState, saveState, track, type AppState } from "@/lib/state";
+import { DEFAULT_STATE, DEMO_PROFILE, effectiveBucket, loadState, saveState, track, type AppState } from "@/lib/state";
 
 const CHIPS = [
   "Does this run small?",
@@ -36,7 +36,7 @@ export function ItemVerdict() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const product = productById(id);
-  const [state, setState] = useState<AppState | null>(null);
+  const [state, setState] = useState<AppState>(DEFAULT_STATE);
   const [size, setSize] = useState("M");
   const [sheet, setSheet] = useState<null | "ask" | "nfm" | "dis" | "oos">(null);
   const [ask, setAsk] = useState("");
@@ -47,14 +47,14 @@ export function ItemVerdict() {
 
   useEffect(() => {
     const s = loadState();
-    setState(s);
+    setState({ ...s, profile: s.profile ?? DEMO_PROFILE });
     if (product) setSize(product.suggestedSize === "Free" ? "Free" : product.suggestedSize);
     if (product) track("verdict_opened", { style_id: product.id });
   }, [product]);
 
   const bucket = useMemo(() => (state && product ? effectiveBucket(product.id, state) : "check_fit"), [state, product]);
 
-  if (!product || !state) {
+  if (!product) {
     return (
       <div className="app-shell pad">
         <p>Item not found.</p>

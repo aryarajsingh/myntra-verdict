@@ -3,12 +3,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { PRODUCTS } from "@/data/products";
-import { loadState, type AppState } from "@/lib/state";
+import { DEFAULT_STATE, loadState, type AppState } from "@/lib/state";
 
 export function BagView() {
-  const [state, setState] = useState<AppState | null>(null);
+  const [state, setState] = useState<AppState>(DEFAULT_STATE);
   useEffect(() => setState(loadState()), []);
-  if (!state) return <div className="app-shell pad">Loading…</div>;
   const lines = state.bag
     .map((b) => ({ ...b, p: PRODUCTS.find((x) => x.id === b.id) }))
     .filter((x) => x.p);
