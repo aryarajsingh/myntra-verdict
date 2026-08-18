@@ -5,7 +5,7 @@ import { CORPUS, quotesFor } from "@/data/corpus";
 import { OPPORTUNITIES } from "@/data/opportunities";
 import { BriefQuestions, SegmentsPanel } from "@/components/BriefQuestions";
 import { HBars, Scatter, Stacked } from "@/components/Viz";
-import { SAMPLE_QUOTES, type Classification } from "@/lib/classify";
+import { type Classification } from "@/lib/classify";
 import { EXTRACT_PROMPT } from "@/data/extract-prompt";
 import { LINKS } from "@/lib/links";
 import { apiPath } from "@/lib/api";
@@ -14,7 +14,6 @@ import type { PipeLog, PipeResult, PipeStage } from "@/lib/pipeline";
 import { corpusStats, mixOf, shareOf, sourceCoverage } from "@/lib/stats";
 import { buildVecModel, type VecModel } from "@/lib/vector";
 import type { BarrierId } from "@/data/types";
-import { useTour } from "@/components/LayoutTour";
 
 const SHORT: Record<BarrierId, string> = {
   fit_uncertainty: "Fit",
@@ -28,6 +27,10 @@ const SHORT: Record<BarrierId, string> = {
   bookmark_only: "Bookmark",
 };
 
+const FIT = LIVE_BATTERY[0];
+const EORS = LIVE_BATTERY.find((s) => s.label === "EORS wait")!;
+const REST = LIVE_BATTERY.filter((s) => s.label !== FIT.label && s.label !== EORS.label);
+
 function expectFor(id: BarrierId) {
   return id === "budget_sale_wait" ? `${SHORT[id]} · DISQ` : SHORT[id];
 }
@@ -36,7 +39,6 @@ type Panel = "try" | "board" | "brief" | "method";
 type Shot = { label: string; gold: BarrierId; pred: BarrierId; disq: boolean; ok: boolean };
 
 export function DiscoveryApp() {
-  const tour = useTour();
   const stats = corpusStats();
   const [running, setRunning] = useState(false);
   const [calling, setCalling] = useState(false);
@@ -47,7 +49,8 @@ export function DiscoveryApp() {
   const [model, setModel] = useState<VecModel | null>(null);
   const [picked, setPicked] = useState<BarrierId>("fit_uncertainty");
   const [panel, setPanel] = useState<Panel>("try");
-  const [paste, setPaste] = useState(SAMPLE_QUOTES[0].text);
+  const [paste, setPaste] = useState(FIT.text);
+  const [sentFit, setSentFit] = useState(false);
   const [result, setResult] = useState<Classification | null>(null);
   const [sourceFilter, setSourceFilter] = useState("All");
   const [err, setErr] = useState<string | null>(null);
@@ -192,7 +195,7 @@ export function DiscoveryApp() {
     setErr(null);
     if (!engine?.live) {
       setResult(null);
-      setErr("Extract is off here. Open the Vercel URL.");
+      setErr("Extract is off here. Open the live URL.");
       return;
     }
     setCalling(true);
@@ -205,6 +208,7 @@ export function DiscoveryApp() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || `Extract HTTP ${res.status}`);
       setResult(json as Classification);
+      if (text === FIT.text) setSentFit(true);
       if (json.runtime) setExtractMeta(json.runtime);
     } catch (e) {
       setResult(null);
@@ -214,193 +218,181 @@ export function DiscoveryApp() {
     }
   }
 
+  const connecting = engine === null;
+  const live = Boolean(engine?.live);
+
   return (
     <div className="studio">
       <header className="studio-top">
         <div>
-          <p className="hub-kicker">
-            Part 1 · live model
-            {engine?.live ? ` · ${engine.provider}` : engine ? " · not connected" : ""}
-          </p>
-          <h1 className="display sm">Pick a review. Groq says why they didn’t buy.</h1>
+          <p className="hub-kicker">Part 1 · live model{live ? ` · ${engine?.provider}` : ""}</p>
+          <h1 className="display sm">Send this review. Groq says why they didn’t buy.</h1>
           <p className="hub-lede" style={{ marginTop: 8, maxWidth: 640 }}>
-            This is the AI, not the shop. A click sends the text to <code>POST /api/extract</code>. You should see a
-            barrier (fit, return, sale…). Sale-wait must come back DISQUALIFIED. The 625 / 400 scores on the next tab
-            are from quotes I labelled — Groq does not invent how common something is.
+            This is the AI, not the shop. Press Send. Then send EORS wait — that one must come back DISQUALIFIED. The
+            625 / 400 scores below are from quotes I labelled. Groq does not invent how common something is.
           </p>
-        </div>
-        <div className="studio-actions">
-          <button className="ghost" type="button" onClick={tour.open}>
-            What’s here
-          </button>
         </div>
       </header>
 
       {err ? <p className="callout">{err}</p> : null}
 
-      <div className="studio-tabs">
-        {(
-          [
-            ["try", "Try a quote"],
-            ["board", "My ranking"],
-            ["brief", "10 questions"],
-            ["method", "Prompt"],
-          ] as const
-        ).map(([id, label]) => (
-          <button key={id} type="button" className={panel === id ? "on" : ""} onClick={() => go(id)}>
-            {label}
-          </button>
-        ))}
-      </div>
-
-      {panel === "try" ? (
-        <div className="studio-grid">
-          <section className="viz-card">
-            <header>
-              <h2>1. Send a quote</h2>
-              <p>Start with Fit freeze, then EORS wait. Or paste any review.</p>
-            </header>
+      <div className="studio-grid">
+        <section className="viz-card">
+          <header>
+            <h2>Send</h2>
+            <p>Loaded: Fit freeze. One primary button.</p>
+          </header>
+          <p className="recommended-chip">
+            <b>{FIT.label}</b>
+            <span>expect {expectFor(FIT.gold)}</span>
+          </p>
+          <textarea value={paste} onChange={(e) => setPaste(e.target.value)} rows={6} />
+          <div className="path-ctas" style={{ marginTop: 8 }}>
+            {connecting ? (
+              <button className="primary" type="button" disabled>
+                Connecting to Groq…
+              </button>
+            ) : live ? (
+              <button
+                className="primary"
+                type="button"
+                disabled={!paste.trim() || calling || running}
+                onClick={() => runQuote(paste)}
+              >
+                {calling ? "Calling Groq…" : "Send to Groq"}
+              </button>
+            ) : (
+              <a className="primary" href={LINKS.discovery}>
+                Open the live URL
+              </a>
+            )}
+            {sentFit && paste !== EORS.text && live ? (
+              <button className="secondary" type="button" disabled={calling || running} onClick={() => runQuote(EORS.text)}>
+                Send EORS wait
+              </button>
+            ) : null}
+          </div>
+          {live ? (
+            <p className="muted" style={{ marginTop: 8 }}>
+              {engine?.provider}/{engine?.model}
+              {extractMeta ? ` · last call ${extractMeta.ms}ms` : ""}
+            </p>
+          ) : null}
+          <details className="more-samples">
+            <summary>More samples and check all 7</summary>
             <div className="filters">
-              {LIVE_BATTERY.map((s) => (
+              {REST.map((s) => (
                 <button
                   key={s.label}
                   type="button"
                   className={`filter ${paste === s.text ? "on" : ""}`}
                   onClick={() => runQuote(s.text)}
-                  disabled={calling || running || !engine?.live}
+                  disabled={calling || running || !live}
                 >
                   {s.label}
                   <span className="filter-expect"> → {expectFor(s.gold)}</span>
                 </button>
               ))}
             </div>
-            <textarea value={paste} onChange={(e) => setPaste(e.target.value)} rows={6} />
-            <div className="path-ctas" style={{ marginTop: 8 }}>
-              <button
-                className="primary"
-                type="button"
-                disabled={!paste.trim() || !engine?.live || calling || running}
-                onClick={() => runQuote(paste)}
-              >
-                {calling ? "Calling Groq…" : "Send to Groq"}
-              </button>
-              <button className="secondary" type="button" onClick={run} disabled={running || calling || !engine?.live}>
-                {running ? `Checking ${tick.i}/${tick.n}` : "Check all 7 vs my labels"}
-              </button>
-            </div>
-            {!engine?.live ? (
-              <p className="muted" style={{ marginTop: 8 }}>
-                Extract is off here. Open the Vercel URL.
-              </p>
-            ) : (
-              <p className="muted" style={{ marginTop: 8 }}>
-                {engine.provider}/{engine.model}
-                {extractMeta ? ` · last call ${extractMeta.ms}ms` : ""}
-              </p>
-            )}
-          </section>
+            <button className="secondary" type="button" onClick={run} disabled={running || calling || !live} style={{ marginTop: 8 }}>
+              {running ? `Checking ${tick.i}/${tick.n}` : "Check all 7 vs my labels"}
+            </button>
+          </details>
+        </section>
 
-          <section className="viz-card">
-            {result ? (
-              <>
-                <header>
-                  <h2>2. What Groq returned</h2>
-                  <p>
-                    {result.disqualifiedMonetary
-                      ? "DISQUALIFIED — I can’t solve this by paying the user."
-                      : `${result.intentGuess} intent · ${result.job}`}
-                  </p>
-                </header>
-                <p className="result-barrier">{result.opportunityName}</p>
-                {goldForPaste ? (
-                  <p className={result.barrier === goldForPaste.gold ? "result-match ok" : "result-match miss"}>
-                    {result.barrier === goldForPaste.gold
-                      ? `Matches what I labelled (${expectFor(goldForPaste.gold)}).`
-                      : `I labelled this ${expectFor(goldForPaste.gold)}. Groq said ${SHORT[result.barrier]}.`}
-                  </p>
-                ) : (
-                  <p className="muted">Paste is free-text, so there’s no gold label to check against.</p>
-                )}
-                <p style={{ marginTop: 12 }}>{result.productCall}</p>
-                <details style={{ marginTop: 16 }}>
-                  <summary>JSON from Groq</summary>
-                  <pre className="extract-json">{JSON.stringify(result.extract, null, 2)}</pre>
-                </details>
-              </>
-            ) : (
-              <>
-                <header>
-                  <h2>2. Result lands here</h2>
-                  <p>Click Fit freeze. You should get fit uncertainty, not a star rating.</p>
-                </header>
-                <p className="muted">Nothing sent yet.</p>
-              </>
-            )}
-          </section>
-
-          {shots.length > 0 || running ? (
-            <section className="viz-card span2">
-              <header>
-                <h2>3. Seven labelled quotes</h2>
-                <p>
-                  {running
-                    ? `Live ${tick.i}/${tick.n}.`
-                    : done
-                      ? `${done.agree}/${done.n} matched my labels (${done.agreePct}%). ${done.ms}ms. Ranking scores stay mine.`
-                      : "Each row is one POST /api/extract."}
+        <section className={`viz-card output-stage${result ? "" : " empty"}`}>
+          <header>
+            <h2>Output</h2>
+            <p>
+              {result
+                ? result.disqualifiedMonetary
+                  ? "I can’t solve this by paying the user."
+                  : `${result.intentGuess} intent · ${result.job}`
+                : "Output — Groq’s barrier for this quote lands here. Nothing is sent until you press Send."}
+            </p>
+          </header>
+          {result ? (
+            <>
+              <p className="result-barrier">{result.opportunityName}</p>
+              {result.disqualifiedMonetary ? <p className="disq-chip">DISQUALIFIED</p> : null}
+              {goldForPaste ? (
+                <p className={result.barrier === goldForPaste.gold ? "result-match ok" : "result-match miss"}>
+                  {result.barrier === goldForPaste.gold
+                    ? `Matches what I labelled (${expectFor(goldForPaste.gold)}).`
+                    : `I labelled this ${expectFor(goldForPaste.gold)}. Groq said ${SHORT[result.barrier]}.`}
                 </p>
-              </header>
-              {running ? (
-                <div className="run-meter">
-                  <span style={{ width: `${(tick.i / Math.max(tick.n, 1)) * 100}%` }} />
-                </div>
-              ) : null}
-              <table className="table battery-table">
-                <thead>
-                  <tr>
-                    <th>Sample</th>
-                    <th>I labelled</th>
-                    <th>Groq</th>
-                    <th>Match</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {LIVE_BATTERY.map((s) => {
-                    const hit = shots.find((x) => x.label === s.label);
-                    return (
-                      <tr key={s.label} className={hit ? (hit.ok ? "picked" : "disq") : ""}>
-                        <td>{s.label}</td>
-                        <td>{expectFor(s.gold)}</td>
-                        <td>{hit ? `${SHORT[hit.pred]}${hit.disq ? " · DISQ" : ""}` : running ? "…" : "—"}</td>
-                        <td>{hit ? (hit.ok ? "Yes" : "No") : "—"}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </section>
+              ) : (
+                <p className="muted">Paste is free-text, so there’s no gold label to check against.</p>
+              )}
+              <p style={{ marginTop: 12 }}>{result.productCall}</p>
+              <details style={{ marginTop: 16 }}>
+                <summary>JSON from Groq</summary>
+                <pre className="extract-json">{JSON.stringify(result.extract, null, 2)}</pre>
+              </details>
+            </>
           ) : (
-            <section className="viz-card span2">
-              <header>
-                <h2>3. Optional: check all 7</h2>
-                <p>
-                  Same seven samples, one after another. You get a table: my label vs Groq. EORS must DISQ. This is the
-                  batch test — not required if you already tried Fit freeze and EORS.
-                </p>
-              </header>
-            </section>
+            <div className="output-frame">Nothing is sent until you press Send.</div>
           )}
-        </div>
-      ) : null}
+        </section>
 
-      {panel === "board" ? (
-        <div className="studio-grid">
+        {shots.length > 0 || running ? (
+          <section className="viz-card span2">
+            <header>
+              <h2>Seven labelled quotes</h2>
+              <p>
+                {running
+                  ? `Live ${tick.i}/${tick.n}.`
+                  : done
+                    ? `${done.agree}/${done.n} matched my labels (${done.agreePct}%). Ranking scores stay mine.`
+                    : "Each row is one POST /api/extract."}
+              </p>
+            </header>
+            {running ? (
+              <div className="run-meter">
+                <span style={{ width: `${(tick.i / Math.max(tick.n, 1)) * 100}%` }} />
+              </div>
+            ) : null}
+            <table className="table battery-table">
+              <thead>
+                <tr>
+                  <th>Sample</th>
+                  <th>I labelled</th>
+                  <th>Groq</th>
+                  <th>Match</th>
+                </tr>
+              </thead>
+              <tbody>
+                {LIVE_BATTERY.map((s) => {
+                  const hit = shots.find((x) => x.label === s.label);
+                  return (
+                    <tr key={s.label} className={hit ? (hit.ok ? "picked" : "disq") : ""}>
+                      <td>{s.label}</td>
+                      <td>{expectFor(s.gold)}</td>
+                      <td>{hit ? `${SHORT[hit.pred]}${hit.disq ? " · DISQ" : ""}` : running ? "…" : "—"}</td>
+                      <td>{hit ? (hit.ok ? "Yes" : "No") : "—"}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </section>
+        ) : null}
+      </div>
+
+      <details
+        className="hub-fold"
+        open={panel === "board"}
+        onToggle={(e) => go((e.currentTarget as HTMLDetailsElement).open ? "board" : "try")}
+      >
+        <summary>How I ranked (coded panel, not Groq)</summary>
+        <div className="studio-grid" style={{ marginTop: 12 }}>
           <section className="viz-card span2">
             <header>
               <h2>These scores are not the model</h2>
               <p>
-                I coded {stats.n} quotes (F × S × M × N). Groq only labels a quote you send. {model ? `${model.vocabSize} tokens in the overlap check, unused for rank.` : ""}{" "}
-                Click a bar to read evidence.
+                I coded {stats.n} quotes (F × S × M × N). Groq only labels a quote you send.
+                {model ? ` ${model.vocabSize} tokens in the overlap check, unused for rank.` : ""} Click a bar to read
+                evidence.
               </p>
             </header>
           </section>
@@ -427,7 +419,6 @@ export function DiscoveryApp() {
               }))}
             />
           </section>
-
           <section className="viz-card">
             <header>
               <h2>What I’m allowed to solve</h2>
@@ -447,7 +438,6 @@ export function DiscoveryApp() {
               }))}
             />
           </section>
-
           <section className="viz-card">
             <header>
               <h2>Intent mix</h2>
@@ -465,7 +455,6 @@ export function DiscoveryApp() {
               {stats.offPct}% leave the app. {stats.fitPct}% speak fit.
             </p>
           </section>
-
           <section className="viz-card">
             <header>
               <h2>Sources</h2>
@@ -480,7 +469,6 @@ export function DiscoveryApp() {
               }))}
             />
           </section>
-
           <section className="viz-card span2">
             <header>
               <h2>{opp.name}</h2>
@@ -508,33 +496,33 @@ export function DiscoveryApp() {
             </div>
           </section>
         </div>
-      ) : null}
+      </details>
 
-      {panel === "brief" ? <BriefQuestions /> : null}
+      <details
+        className="hub-fold"
+        open={panel === "brief"}
+        onToggle={(e) => go((e.currentTarget as HTMLDetailsElement).open ? "brief" : "try")}
+      >
+        <summary>10 questions</summary>
+        <BriefQuestions />
+      </details>
 
-      {panel === "method" ? (
+      <details
+        className="hub-fold"
+        open={panel === "method"}
+        onToggle={(e) => go((e.currentTarget as HTMLDetailsElement).open ? "method" : "try")}
+      >
+        <summary>Prompt</summary>
         <div className="tab-body" style={{ marginTop: 12 }}>
           <p>
-            Each Try-a-quote click is one Groq call. System prompt is <a href={LINKS.extractPrompt}>extract-prompt.md</a>
-            . JSON fields: job, barrier, intent, workaround, severity, metricProximity, productCall. If Groq says
-            sale-wait or EORS, I force DISQUALIFY. Frequency for the ranking is from the coded panel, not from the
-            model.
-          </p>
-          <ol className="method-steps">
-            <li>You send a quote.</li>
-            <li>Groq returns a barrier.</li>
-            <li>Policy: sale-wait → DISQUALIFY.</li>
-            <li>I still rank opportunities from the 205 labelled quotes (fit 625, return 400, sale 100 DISQ).</li>
-          </ol>
-          <p style={{ marginTop: 12 }}>
-            {engine?.live ? `${engine.provider}/${engine.model}` : "no model on this host"}
-            {logs.length ? ` · last batch log ${logs.length} lines` : ""}
+            Each Send is one Groq call. System prompt is <a href={LINKS.extractPrompt}>extract-prompt.md</a>. If Groq
+            says sale-wait or EORS, I force DISQUALIFY.
           </p>
           {logs.length ? <pre className="run-log">{logs.map((l) => `${String(l.at).padStart(4, " ")}ms  ${l.msg}`).join("\n")}</pre> : null}
           <pre className="extract-json">{EXTRACT_PROMPT}</pre>
           <SegmentsPanel />
         </div>
-      ) : null}
+      </details>
     </div>
   );
 }

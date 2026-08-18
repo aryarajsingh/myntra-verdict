@@ -19,8 +19,8 @@ export function ArtefactsApp() {
       <p className="hub-kicker">Files</p>
       <h1 className="display sm">Supporting files</h1>
       <p className="hub-lede">
-        Submit the home URL. Discovery, wishlist, and the PDF are on that site. This list is the rest: interviews, notes,
-        extract prompt, questionnaire URL, workbook.
+        Submit the home URL. Live model, product, research, and the PDF are on that site. This list is the rest:
+        interviews, notes, extract prompt, questionnaire URL, workbook.
       </p>
 
       <ol className="docs-list">

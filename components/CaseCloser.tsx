@@ -2,33 +2,29 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FLOW, placeFromPath } from "@/lib/flow";
+import { FLOW, isProductSurface, placeFromPath } from "@/lib/flow";
 import { LINKS } from "@/lib/links";
 
-const NEXT: Record<string, { href: string; title: string; body: string }> = {
+const NEXT: Record<string, { href: string; title: string; body: string } | null> = {
   discovery: {
-    href: "/research/",
-    title: "Research",
-    body: "Six interviews, then the charts.",
+    href: "/wishlist/",
+    title: "Product",
+    body: "Pinned Check fit blazer → See Verdict.",
   },
   research: {
     href: "/wishlist/",
-    title: "MVP",
-    body: "The product. Open a Check fit item → See Verdict.",
+    title: "Product",
+    body: "The wishlist. Open the pinned Check fit blazer → See Verdict.",
   },
   wishlist: {
     href: "/deck/",
     title: "Deck",
-    body: "Ten slides that argue for this wishlist product.",
+    body: "Ten slides that argue for this product.",
   },
-  deck: {
-    href: "/docs/",
-    title: "Files",
-    body: "Prompt, interviews, survey, workbook, PDF.",
-  },
+  deck: null,
   files: {
-    href: "/discovery/#try",
-    title: "Discovery",
+    href: "/discovery/",
+    title: "Live model",
     body: "Send Fit freeze, then EORS wait.",
   },
 };
@@ -36,7 +32,7 @@ const NEXT: Record<string, { href: string; title: string; body: string }> = {
 export function CaseCloser() {
   const path = usePathname();
   const place = placeFromPath(path);
-  const idx = FLOW.findIndex((s) => s.id === place);
+  const product = isProductSurface(path);
   const next = path.startsWith("/survey/form")
     ? {
         href: "/survey/",
@@ -52,18 +48,10 @@ export function CaseCloser() {
       : NEXT[place];
 
   return (
-    <div className="case-closer no-print">
+    <div className={`case-closer no-print${product ? " product-focus" : ""}`}>
       {next && place !== "home" ? (
         <Link href={next.href} className="flow-next">
-          <span className="flow-next-k">
-            {place === "deck"
-              ? "Case files"
-              : place === "files"
-                ? "Loop"
-                : path.startsWith("/survey")
-                  ? "Back"
-                  : `Next · ${idx + 1} of ${FLOW.length}`}
-          </span>
+          <span className="flow-next-k">{product ? "Next" : path.startsWith("/survey") ? "Back" : "Next"}</span>
           <span className="flow-next-t">{next.title}</span>
           <span className="flow-next-b">{next.body}</span>
           <span className="flow-next-go">Continue</span>
@@ -75,20 +63,22 @@ export function CaseCloser() {
           <Link href="/">Verdict</Link>
           <span>Myntra Growth case · not the Myntra app · no coupons</span>
         </p>
-        <nav className="case-foot-nav" aria-label="Case">
-          {FLOW.map((s, i) => (
-            <Link key={s.id} href={s.href} className={place === s.id ? "on" : ""}>
-              {i + 1} {s.label}
+        {product ? null : (
+          <nav className="case-foot-nav" aria-label="Case">
+            {FLOW.map((s) => (
+              <Link key={s.id} href={s.href} className={place === s.id ? "on" : ""}>
+                {s.label}
+              </Link>
+            ))}
+            <Link href="/docs/" className={place === "files" ? "on" : ""}>
+              Files
             </Link>
-          ))}
-          <Link href="/docs/" className={place === "files" ? "on" : ""}>
-            Files
-          </Link>
-          <a href={LINKS.pdf}>PDF</a>
-          <a href={LINKS.github} target="_blank" rel="noreferrer">
-            Code
-          </a>
-        </nav>
+            <a href={LINKS.pdf}>PDF</a>
+            <a href={LINKS.github} target="_blank" rel="noreferrer">
+              Code
+            </a>
+          </nav>
+        )}
       </footer>
     </div>
   );

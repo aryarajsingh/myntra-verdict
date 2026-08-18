@@ -81,13 +81,13 @@ export function DeckApp() {
           <div className="box">
             <p style={{ fontWeight: 700 }}>This one site</p>
             <p>
-              <a href={LINKS.home}>Home</a> is the link to submit. Engine, MVP, and this PDF live on it.
+              <a href={LINKS.home}>Home</a> is the link to submit. Live model, product, research, and this PDF live on it.
             </p>
             <p>
-              <a href={LINKS.discovery}>1. Discovery engine</a>
+              <a href={LINKS.discovery}>1. Live model</a> — Send Fit freeze, then EORS wait.
             </p>
             <p>
-              <a href={LINKS.mvp}>2. Deployed MVP</a>
+              <a href={LINKS.mvp}>2. Product</a> — pinned Check-fit blazer → See Verdict.
             </p>
             <p>
               <a href={LINKS.pdf}>3. This deck (PDF)</a>
@@ -203,14 +203,14 @@ export function DeckApp() {
             </p>
           </div>
           <div className="box">
-            <p style={{ fontWeight: 700 }}>Test this slide</p>
+            <p style={{ fontWeight: 700 }}>Run this</p>
             <p>
               <a href={LINKS.brief}>Open WhyWait — 10 questions</a>
             </p>
-            <p>Scores · 2×2 · Test the model (Fit freeze / EORS)</p>
+            <p>Send Fit freeze, then Send EORS wait (must return DISQUALIFIED).</p>
             <p style={{ marginTop: 12 }}>
               Extract prompt: <a href={LINKS.extractPrompt}>extract-prompt.md</a>. Live run:{" "}
-              <a href={LINKS.discovery}>Discovery</a>. Groq classifies sample quotes. Scores 625 / 400 are from the
+              <a href={LINKS.discovery}>Live model</a>. Groq classifies sample quotes. Scores 625 / 400 are from the
               coded panel, not from the model. A 5-star “sized up” is still fit uncertainty.
             </p>
           </div>
@@ -395,8 +395,8 @@ export function DeckApp() {
           </tbody>
         </table>
         <p style={{ marginTop: 12 }}>
-          Prototype: <a href={LINKS.mvp}>MVP</a> · demo sizes loaded · See Verdict on Check fit. Engine:{" "}
-          <a href={LINKS.discovery}>WhyWait</a>.
+          Prototype: <a href={LINKS.mvp}>Product</a> · demo sizes loaded · pinned Check-fit blazer → See Verdict. Live
+          model: <a href={LINKS.discovery}>Send Fit freeze, then EORS wait</a>.
         </p>
         <Foot n={8} />
       </section>

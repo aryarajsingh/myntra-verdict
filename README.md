@@ -8,9 +8,11 @@ Not the Myntra app. No coupons. Source: https://github.com/aryarajsingh/myntra-v
 
 ## What to click
 
-1. **Discovery** — you land on Try a quote. Click **Fit freeze** (Groq should return fit). Then **EORS wait** (must return sale-wait and DISQUALIFIED). The card on the right is the result. Optional: Check all 7 vs my labels.
-2. **Research** — six interviews, then the charts. You don’t need to fill the questionnaire.
-3. **MVP** — this is the product, a fake wishlist. Open a **Check fit** item → **See Verdict**. Seal-tag stays in Still exploring.
+The run: **Send Fit freeze**, then **Send EORS wait** (must come back sale-wait and **DISQUALIFIED**), then open **Product**, tap the pinned **Check-fit cropped blazer**, **See Verdict**.
+
+1. **Live model** (`/discovery`) — Fit freeze is already in the box. Press **Send**. Then **Send EORS wait**. Groq’s barrier lands in Output. Other samples and Check all 7 sit in a disclosure.
+2. **Product** (`/wishlist`) — demo sizes are loaded. Open the pinned Cropped blazer → **See Verdict**.
+3. **Research** — artefact, not step 2 of the run. Six interviews and charts. You don’t need to fill the questionnaire.
 4. **Deck** — 10 slides. PDF is on that page.
 
 Extract is Groq on Vercel (`POST /api/extract`). Ranking stays on the quotes I coded. Sale-wait is forced DISQUALIFY.

@@ -2,9 +2,16 @@ export const FLOW = [
   {
     id: "discovery",
     href: "/discovery/",
-    label: "Discovery",
-    blurb: "Try a review. Groq returns why they didn’t buy. Fit freeze, then EORS (must DISQ).",
-    time: "8 min",
+    label: "Live model",
+    blurb: "Send Fit freeze, then EORS wait. Groq returns why they didn’t buy.",
+    time: "5 min",
+  },
+  {
+    id: "wishlist",
+    href: "/wishlist/",
+    label: "Product",
+    blurb: "Wishlist with Verdict. Open the pinned Check fit blazer.",
+    time: "5 min",
   },
   {
     id: "research",
@@ -12,13 +19,6 @@ export const FLOW = [
     label: "Research",
     blurb: "Six interviews, a survey link, charts, then what I take from it.",
     time: "8 min",
-  },
-  {
-    id: "wishlist",
-    href: "/wishlist/",
-    label: "MVP",
-    blurb: "The product: a wishlist with Verdict. Open a Check fit card.",
-    time: "5 min",
   },
   {
     id: "deck",
@@ -44,4 +44,9 @@ export function placeFromPath(path: string): Place {
   if (p.startsWith("/deck")) return "deck";
   if (p.startsWith("/docs")) return "files";
   return "home";
+}
+
+export function isProductSurface(path: string) {
+  const p = path.replace(/\/$/, "") || "/";
+  return p.startsWith("/wishlist") || p.startsWith("/item") || p.startsWith("/bag") || p.startsWith("/compare");
 }

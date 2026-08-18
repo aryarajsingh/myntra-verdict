@@ -7,7 +7,6 @@ import type { Bucket, Profile } from "@/data/types";
 import { ProductArt } from "./ProductArt";
 import { PolicyChip, StatusChip } from "./StatusChip";
 import { DEFAULT_STATE, DEMO_PROFILE, effectiveBucket, loadState, saveState, track, type AppState } from "@/lib/state";
-import { MvpStrip } from "@/components/MvpStrip";
 
 const TOPS = ["XS", "S", "M", "L", "XL", "XXL"];
 const HEIGHTS = [
@@ -22,6 +21,38 @@ const FIT_HELP: Record<Profile["fitPref"], string> = {
   Regular: "Easy through the body. Not tight, not oversized.",
   Relaxed: "I like room. I avoid anything clingy.",
 };
+
+const HERO_ID = "only-blazer";
+
+function Card({
+  p,
+  bucket,
+  inBag,
+  primary,
+}: {
+  p: (typeof PRODUCTS)[number];
+  bucket: Bucket;
+  inBag?: string;
+  primary?: boolean;
+}) {
+  return (
+    <article className={`wl-card${primary ? " wl-hero" : ""}`}>
+      <ProductArt product={p} />
+      <div>
+        <StatusChip bucket={bucket} />
+        <p style={{ fontWeight: 600, marginTop: 6 }}>{p.brand}</p>
+        <p>{p.name}</p>
+        <p style={{ fontWeight: 700 }}>₹{p.price.toLocaleString("en-IN")}</p>
+        <span className="chip chip-reason">{p.saveReason}</span> <PolicyChip policy={p.returnClass} />
+        <p style={{ margin: "8px 0" }}>{p.fitLine}</p>
+        {inBag ? <p className="chip chip-policy">IN BAG</p> : null}
+        <Link href={`/item/${p.id}`} className={primary ? "primary" : "text-btn"} style={{ marginTop: 8 }}>
+          {bucket === "exploring" ? "See why it’s here" : "See Verdict"}
+        </Link>
+      </div>
+    </article>
+  );
+}
 
 function Header({ bagCount }: { bagCount: number }) {
   return (
@@ -196,11 +227,10 @@ export function WishlistHome() {
   const filtered = visible.filter((x) => filter === "all" || x.bucket === filter);
 
   return (
-    <>
-      <MvpStrip />
-      <div className="app-shell">
+    <div className="app-shell">
       <Header bagCount={state.bag.length} />
       <div className="pad">
+        <p className="wl-run">Open Check fit → See Verdict.</p>
         <div className="wl-meta">
           <p>
             {visible.length} saved · Tops {state.profile?.top} · Bottoms {state.profile?.bottom} · Ethnic{" "}
@@ -211,41 +241,36 @@ export function WishlistHome() {
           </button>
         </div>
         <div className="seg">
-          {(["all", "ready", "check_fit", "exploring"] as const).map((f) => (
+          {(["all", "check_fit", "ready", "exploring"] as const).map((f) => (
             <button key={f} type="button" className={filter === f ? "on" : ""} onClick={() => setFilter(f)}>
               {f === "all" ? "All" : f === "ready" ? "Ready" : f === "check_fit" ? "Check fit" : "Still exploring"}
             </button>
           ))}
         </div>
+        {filter === "all" || filter === "check_fit"
+          ? (() => {
+              const hero = visible.find((x) => x.p.id === HERO_ID);
+              return hero ? <Card p={hero.p} bucket={hero.bucket} inBag={hero.inBag} primary /> : null;
+            })()
+          : null}
         {groups
           .filter((g) => filter === "all" || filter === g.id)
           .map((g) => {
-            const items = filtered.filter((x) => x.bucket === g.id);
+            const items = filtered.filter(
+              (x) => x.bucket === g.id && !((filter === "all" || filter === "check_fit") && x.p.id === HERO_ID),
+            );
             return (
               <section key={g.id} style={{ marginBottom: 24 }}>
                 <h2 style={{ fontSize: 16, display: "flex", gap: 8, alignItems: "center" }}>
                   {g.title} <StatusChip bucket={g.id} /> <span className="muted">{items.length}</span>
                 </h2>
                 <div className={`group-bar ${g.id === "check_fit" ? "fit" : g.id === "ready" ? "ready" : "explore"}`} />
-                <p className="muted">{g.sub}</p>
+                <p className="muted">
+                  {g.id === "check_fit" && (filter === "all" || filter === "check_fit") ? "Rest of Check fit" : g.sub}
+                </p>
                 {items.length === 0 ? <p style={{ marginTop: 8 }}>Nothing in this group right now.</p> : null}
                 {items.map(({ p, bucket, inBag }) => (
-                  <article key={p.id} className="wl-card">
-                    <ProductArt product={p} />
-                    <div>
-                      <StatusChip bucket={bucket} />
-                      <p style={{ fontWeight: 600, marginTop: 6 }}>{p.brand}</p>
-                      <p>{p.name}</p>
-                      <p style={{ fontWeight: 700 }}>₹{p.price.toLocaleString("en-IN")}</p>
-                      <span className="chip chip-reason">{p.saveReason}</span>{" "}
-                      <PolicyChip policy={p.returnClass} />
-                      <p style={{ margin: "8px 0" }}>{p.fitLine}</p>
-                      {inBag ? <p className="chip chip-policy">IN BAG</p> : null}
-                      <Link href={`/item/${p.id}`} className="primary" style={{ marginTop: 8 }}>
-                        {bucket === "exploring" ? "See why it’s here" : "See Verdict"}
-                      </Link>
-                    </div>
-                  </article>
+                  <Card key={p.id} p={p} bucket={bucket} inBag={inBag} />
                 ))}
               </section>
             );
@@ -260,6 +285,5 @@ export function WishlistHome() {
         </div>
       ) : null}
     </div>
-    </>
   );
 }

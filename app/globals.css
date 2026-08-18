@@ -492,6 +492,23 @@ p {
   background: #fff;
 }
 
+.wl-hero {
+  border: 2px solid var(--ink);
+  grid-template-columns: 140px 1fr;
+  padding: 16px;
+}
+
+.wl-run {
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.wl-card .text-btn {
+  width: auto;
+  justify-content: flex-start;
+  padding-left: 0;
+}
+
 .wl-card img,
 .hero-img {
   width: 100%;
@@ -1222,6 +1239,32 @@ p {
 
 .hub-start {
   margin-top: 28px;
+  align-items: center;
+}
+
+.hub-fold {
+  margin-top: 40px;
+  background: var(--paper);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  padding: 8px 18px 16px;
+}
+
+.hub-fold > summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 12px 0;
+  list-style: none;
+}
+
+.hub-fold > summary::-webkit-details-marker {
+  display: none;
+}
+
+.text-link {
+  color: var(--ink);
+  font-weight: 600;
+  text-underline-offset: 3px;
 }
 
 .flow-list {
@@ -1458,6 +1501,14 @@ p {
 .path-ctas .primary,
 .path-ctas .secondary {
   width: auto;
+}
+
+.path-ctas .text-link {
+  padding: 10px 4px;
+}
+
+.product-focus .case-foot-nav {
+  display: none;
 }
 
 .assign-map {
@@ -2479,6 +2530,49 @@ p {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
+}
+
+.output-stage.empty {
+  min-height: 280px;
+}
+
+.output-frame {
+  border: 1px dashed var(--border-strong);
+  border-radius: 12px;
+  padding: 28px 16px;
+  color: var(--text-secondary);
+  background: var(--page-sunken);
+}
+
+.disq-chip {
+  display: inline-block;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  padding: 6px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
+  margin: 0 0 10px;
+  background: var(--paper);
+}
+
+.recommended-chip {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--page-sunken);
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.more-samples {
+  margin-top: 16px;
+}
+
+.more-samples summary {
+  cursor: pointer;
+  font-weight: 600;
 }
 
 .viz-card {

@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FLOW, placeFromPath } from "@/lib/flow";
 import { LINKS } from "@/lib/links";
-import { useTour } from "@/components/LayoutTour";
 
 function isOn(path: string, href: string) {
   const place = placeFromPath(path);
@@ -21,7 +20,6 @@ function isOn(path: string, href: string) {
 export function SiteNav() {
   const path = usePathname();
   const [open, setOpen] = useState(false);
-  const tour = useTour();
 
   useEffect(() => {
     setOpen(false);
@@ -47,12 +45,6 @@ export function SiteNav() {
       <a href={LINKS.pdf} className="nav-pdf">
         PDF
       </a>
-      <a href={LINKS.github} className="nav-pdf" target="_blank" rel="noreferrer">
-        Code
-      </a>
-      <button className="nav-pdf nav-help" type="button" onClick={tour.open}>
-        What’s here
-      </button>
       <span className="nav-chip">Not the Myntra app</span>
       <button
         className="nav-burger"
@@ -83,14 +75,6 @@ export function SiteNav() {
             PDF
             <span>10-slide deck</span>
           </a>
-          <a href={LINKS.github} onClick={() => setOpen(false)} target="_blank" rel="noreferrer">
-            Code
-            <span>Repo</span>
-          </a>
-          <button type="button" onClick={() => { setOpen(false); tour.open(); }}>
-            What’s here
-            <span>Short map</span>
-          </button>
         </div>
       ) : null}
     </header>

@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { Fraunces, Outfit } from "next/font/google";
 import { CaseCloser } from "@/components/CaseCloser";
-import { TourProvider } from "@/components/LayoutTour";
 import { SiteNav } from "@/components/SiteNav";
 import "./globals.css";
 
@@ -28,11 +27,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${outfit.variable} ${fraunces.variable}`}>
       <body className={outfit.className}>
-        <TourProvider>
-          <SiteNav />
-          {children}
-          <CaseCloser />
-        </TourProvider>
+        <SiteNav />
+        {children}
+        <CaseCloser />
       </body>
     </html>
   );
