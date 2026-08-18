@@ -1,8 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { SURVEY_STATS } from "@/data/survey";
 import { LINKS } from "@/lib/links";
+import { Funnel, HBars } from "@/components/Viz";
+import { OPPORTUNITIES } from "@/data/opportunities";
 
-const FOOT = "CONCEPT · Verdict · NextLeap case · Not the Myntra app";
+const FOOT = "Verdict · NextLeap case · not the Myntra app";
 
 function Foot({ n }: { n: number }) {
   return (
@@ -13,18 +17,47 @@ function Foot({ n }: { n: number }) {
 }
 
 export function DeckApp() {
+  const [i, setI] = useState(0);
+
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "ArrowRight" || e.key === "PageDown") setI((n) => Math.min(9, n + 1));
+      if (e.key === "ArrowLeft" || e.key === "PageUp") setI((n) => Math.max(0, n - 1));
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   return (
-    <div className="deck-page">
-      <div className="print-bar no-print">
-        <span>10 slides · 14pt · File → Print → Save as PDF (landscape)</span>
-        <span>
-          <a href={LINKS.pdf} className="secondary" style={{ width: "auto", display: "inline-flex" }}>
-            Download PDF
-          </a>{" "}
-          <button className="secondary" type="button" style={{ width: "auto" }} onClick={() => window.print()}>
-            Print / Save PDF
-          </button>
+    <div className="deck-page slide-view" data-i={i}>
+      <div className="print-bar no-print deck-nav">
+        <button className="secondary" type="button" disabled={i === 0} onClick={() => setI((n) => n - 1)}>
+          Previous
+        </button>
+        <div className="deck-dots" aria-label="Slides">
+          {Array.from({ length: 10 }, (_, n) => (
+            <button
+              key={n}
+              type="button"
+              className={n === i ? "on" : ""}
+              aria-label={`Slide ${n + 1}`}
+              aria-current={n === i ? "true" : undefined}
+              onClick={() => setI(n)}
+            />
+          ))}
+        </div>
+        <span className="deck-count">
+          {i + 1} / 10
         </span>
+        <a href={LINKS.pdf} className="secondary">
+          PDF
+        </a>
+        <button className="secondary" type="button" onClick={() => window.print()}>
+          Print
+        </button>
+        <button className="primary" type="button" disabled={i === 9} onClick={() => setI((n) => n + 1)}>
+          Next
+        </button>
       </div>
 
       <section className="slide">
@@ -41,12 +74,15 @@ export function DeckApp() {
               job is not more discovery. The job is closing a saved decision.
             </p>
             <p style={{ marginTop: 12 }}>
-              Constraint: no coupons, cashback, EORS timers, or invented discounts. Price-wait is real. We are not
+              Constraint: no coupons, cashback, EORS timers, or invented discounts. Price-wait is real. I am not
               allowed to buy the conversion.
             </p>
           </div>
           <div className="box">
-            <p style={{ fontWeight: 700 }}>Submit these three</p>
+            <p style={{ fontWeight: 700 }}>This one site</p>
+            <p>
+              <a href={LINKS.home}>Home</a> is the link to submit. Engine, MVP, and this PDF live on it.
+            </p>
             <p>
               <a href={LINKS.discovery}>1. Discovery engine</a>
             </p>
@@ -56,7 +92,11 @@ export function DeckApp() {
             <p>
               <a href={LINKS.pdf}>3. This deck (PDF)</a>
             </p>
-            <p style={{ marginTop: 12 }}>Concept prototype. Not the Myntra app. No login.</p>
+            <p style={{ marginTop: 12 }}>
+              Also on the site: <a href={LINKS.docs}>files</a> · <a href={LINKS.research}>interviews</a> ·{" "}
+              <a href={LINKS.surveyForm}>survey form</a> · <a href={LINKS.surveyXlsx}>workbook</a>
+            </p>
+            <p>Concept prototype. Not the Myntra app. No login.</p>
           </div>
         </div>
         <Foot n={1} />
@@ -65,6 +105,19 @@ export function DeckApp() {
       <section className="slide">
         <h1>Conversion dies after save: revisit → pick a size → bag → pay</h1>
         <div className="rule" />
+        <div className="no-print">
+          <Funnel
+            steps={[
+              { id: "P1", label: "Revisit" },
+              { id: "P2", label: "Eligible" },
+              { id: "P3", label: "Intent" },
+              { id: "P4", label: "Close uncertainty", on: true },
+              { id: "P5", label: "Pick substitute", on: true },
+              { id: "P6", label: "Bag a size" },
+              { id: "P7", label: "Pay" },
+            ]}
+          />
+        </div>
         <table className="table">
           <thead>
             <tr>
@@ -126,14 +179,23 @@ export function DeckApp() {
       <section className="slide">
         <h1>WhyWait ranks why they wait — not star ratings</h1>
         <div className="rule" />
+        <div className="pipe-graph deck-pipe no-print" role="list">
+          {["Ingest", "Vector", "Extract", "Score", "Policy", "Rank"].map((t, i) => (
+            <div key={t} className="pipe-node done">
+              <span>0{i + 1}</span>
+              <b>{t}</b>
+              {i < 5 ? <i /> : null}
+            </div>
+          ))}
+        </div>
         <div className="two">
           <div>
             <p style={{ fontWeight: 700 }}>Pipeline</p>
             <ol>
-              <li>Ingest public quotes with source URLs (stores, Reddit, hauls, complaints).</li>
+              <li>Ingest quotes + URLs across every source class the brief named (stores, Reddit, communities, social, YouTube, Q&A).</li>
               <li>Extract job, barrier, genuine vs bookmark, workaround, severity, metric proximity.</li>
               <li>Score = frequency × severity × proximity × non-monetary solvability (1–5).</li>
-              <li>Compare opportunities. Disqualify monetary. Pick solvability ≥ 4.</li>
+              <li>Compare opportunities. Disqualify monetary. Answer all 10 brief questions. Pick N ≥ 4.</li>
             </ol>
             <p style={{ marginTop: 12 }}>
               A 5-star “sized up and loved it” is still fit_uncertainty. Stars are not the unit. Blocking an already
@@ -143,14 +205,13 @@ export function DeckApp() {
           <div className="box">
             <p style={{ fontWeight: 700 }}>Test this slide</p>
             <p>
-              <a href="https://aryarajsingh.github.io/myntra-verdict/discovery/">
-                github.io/myntra-verdict/discovery
-              </a>
+              <a href={LINKS.brief}>Open WhyWait — 10 questions</a>
             </p>
-            <p>Ranked bets · 2×2 · compare fit vs EORS · Try a review (Fit / Return / Sale / Bookmark)</p>
+            <p>Scores · 2×2 · Test the model (Fit freeze / EORS)</p>
             <p style={{ marginTop: 12 }}>
-              Works with no API key. Same nine opportunities as this table. A 5-star “sized up” is still fit
-              uncertainty.
+              Extract prompt: <a href={LINKS.extractPrompt}>extract-prompt.md</a>. Live run:{" "}
+              <a href={LINKS.discovery}>Discovery</a>. Groq classifies sample quotes. Scores 625 / 400 are from the
+              coded panel, not from the model. A 5-star “sized up” is still fit uncertainty.
             </p>
           </div>
         </div>
@@ -158,78 +219,18 @@ export function DeckApp() {
       </section>
 
       <section className="slide">
-        <h1>Fit uncertainty + return/seal-tag fear beat every lever we are allowed to pull</h1>
+        <h1>Fit uncertainty + return/seal-tag fear beat every lever I am allowed to pull</h1>
         <div className="rule" />
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Barrier</th>
-              <th>F</th>
-              <th>S</th>
-              <th>M</th>
-              <th>N</th>
-              <th>Score</th>
-              <th>Call</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="picked">
-              <td>Fit uncertainty</td>
-              <td>5</td>
-              <td>5</td>
-              <td>5</td>
-              <td>5</td>
-              <td>625</td>
-              <td>PICKED</td>
-            </tr>
-            <tr>
-              <td>Return / seal-tag fear</td>
-              <td>4</td>
-              <td>5</td>
-              <td>5</td>
-              <td>4</td>
-              <td>400</td>
-              <td>CO-PRIMARY</td>
-            </tr>
-            <tr>
-              <td>Size-chart distrust</td>
-              <td>4</td>
-              <td>4</td>
-              <td>5</td>
-              <td>4</td>
-              <td>320</td>
-              <td>Input to fit story</td>
-            </tr>
-            <tr>
-              <td>Comparison paralysis</td>
-              <td>3</td>
-              <td>3</td>
-              <td>4</td>
-              <td>4</td>
-              <td>144</td>
-              <td>Compare strip</td>
-            </tr>
-            <tr className="disq">
-              <td>Budget / EORS wait</td>
-              <td>5</td>
-              <td>4</td>
-              <td>5</td>
-              <td>1</td>
-              <td>100</td>
-              <td>DISQUALIFIED</td>
-            </tr>
-            <tr>
-              <td>Bookmark-only</td>
-              <td>4</td>
-              <td>2</td>
-              <td>2</td>
-              <td>2</td>
-              <td>32</td>
-              <td>Quarantine, don’t convert</td>
-            </tr>
-          </tbody>
-        </table>
-        <p style={{ marginTop: 12 }}>Sale-wait is frequent. We ranked it. We refused it. N=1 under the constraint.</p>
+        <HBars
+          rows={OPPORTUNITIES.filter((o) => o.score >= 100).map((o) => ({
+            id: o.id,
+            label: o.name,
+            value: o.score,
+            note: `${o.f}×${o.s}×${o.m}×${o.n}${o.disqualifiedMonetary ? " DISQ" : o.id === "fit_uncertainty" ? " PICKED" : ""}`,
+            tone: o.disqualifiedMonetary ? "disq" : o.id === "fit_uncertainty" ? "pick" : undefined,
+          }))}
+        />
+        <p style={{ marginTop: 12 }}>Sale-wait is frequent. I ranked it. I refused it. N=1 under the constraint.</p>
         <Foot n={4} />
       </section>
 
@@ -285,7 +286,10 @@ export function DeckApp() {
           </tbody>
         </table>
         <p style={{ marginTop: 12 }}>
-          Full notes: <a href={LINKS.research}>interview notes</a>. They do not need a coupon. They need a decision object.
+          Notes: <a href={LINKS.research}>interviews</a> · <a href={LINKS.notes}>markdown</a>. Survey n=
+          {SURVEY_STATS.n} ({SURVEY_STATS.inTarget} in-target): fit plurality, sale DISQ.{" "}
+          <a href={LINKS.surveyForm}>Questionnaire</a> · <a href={LINKS.survey}>survey</a> ·{" "}
+          <a href={LINKS.surveyXlsx}>workbook</a>. No coupon. Decision object.
         </p>
         <Foot n={5} />
       </section>
@@ -293,6 +297,10 @@ export function DeckApp() {
       <section className="slide">
         <h1>The wishlist stores intent; it does not close fit or return risk</h1>
         <div className="rule" />
+        <p className="evo-line">
+          <b>Metric</b> 30d WL purchase → <b>Outcomes</b> close uncertainty + pick substitute → <b>WhyWait</b> fit 625 ·
+          return 400 · sale DISQ → <b>Interviews</b> freeze at revisit → <b>Problem</b> saved card has no decision object
+        </p>
         <div className="two">
           <div>
             <p>
@@ -342,7 +350,7 @@ export function DeckApp() {
             <p style={{ fontWeight: 700 }}>Not discounts</p>
             <p>
               EORS wait ranks high and is illegal for this brief. Sale as risk-offset is a symptom of return fear, not
-              the product we ship.
+              the product I ship.
             </p>
           </div>
         </div>
@@ -422,7 +430,7 @@ export function DeckApp() {
               <td>Verdict open rate</td>
               <td>Leading</td>
               <td>Intent revisits that open the decision object</td>
-              <td>Did we put it on the path?</td>
+              <td>Did I put it on the path?</td>
             </tr>
             <tr>
               <td>Compare completed</td>
@@ -454,7 +462,7 @@ export function DeckApp() {
       </section>
 
       <section className="slide">
-        <h1>It fails if we fake certainty or nag people who were only bookmarking</h1>
+        <h1>It fails if I fake certainty or nag people who were only bookmarking</h1>
         <div className="rule" />
         <table className="table">
           <thead>

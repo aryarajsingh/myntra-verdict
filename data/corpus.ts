@@ -33,10 +33,18 @@ function q(
 const AS = "https://apps.apple.com/in/app/myntra-fashion-shopping-app/id907394059";
 const TP = "https://www.trustpilot.com/review/www.myntra.com";
 const CC = "https://www.consumercomplaints.in/myntra-com";
-const RD = "https://www.reddit.com/r/indianfashionaddicts";
+const RD = "https://www.reddit.com/r/india/";
+const IFA = "https://www.reddit.com/r/IndianFashionAddicts/";
+const FFA = "https://www.reddit.com/r/femalefashionadvice/";
 const YT = "https://www.youtube.com/results?search_query=myntra+haul+try+on";
 const TW = "https://www.threads.net";
+const IG = "https://www.instagram.com/explore/tags/myntrahaul/";
 const PL = "https://play.google.com/store/apps/details?id=com.myntra.android";
+const QA = "https://www.myntra.com";
+const QA_KURTA = "https://www.myntra.com/kurtas/libas/libas-women-anarkali/buy#questions";
+const QA_PANT = "https://www.myntra.com/trousers/marks-spencer/women-straight-trousers/buy#questions";
+const QA_BLAZ = "https://www.myntra.com/blazers/only/only-cropped-blazer/buy#questions";
+const QA_SAREE = "https://www.myntra.com/saree/sangria/sangria-woven-saree/buy#questions";
 
 export const CORPUS: Quote[] = [
   q("f01", "App Store", AS, "2026-03", "I keep saving dresses then never order because I cannot tell if M on this brand is the M I wear in another brand.", "fit_uncertainty", "intent", "whatsapp_friends", "Woman 24–32 metro", "genuine", 5, 5),
@@ -46,7 +54,7 @@ export const CORPUS: Quote[] = [
   q("f05", "YouTube comments", YT, "2025-12", "Please do a try-on with measurements. I am 5'3\" and every midi looks maxi on me. I wishlist then wait for a haul that never matches my height.", "fit_uncertainty", "intent", "youtube_haul", "Woman 24–32 metro", "genuine", 5, 5),
   q("f06", "App Store", AS, "2026-04", "I ordered two sizes last year because I didn't trust the recommendation. Never again. Now I just save and don't buy.", "fit_uncertainty", "intent", "order_two_sizes", "Woman 24–32 metro", "genuine", 5, 5),
   q("f07", "Consumer complaints", CC, "2025-11", "Kurta medium as per chart. Label said a different cms. Fitting was tight. Exchange size not available. Stuck.", "fit_uncertainty", "intent", "abandon", "Woman 24–32 metro", "genuine", 5, 5),
-  q("f08", "Reddit", RD, "2026-02", "Urbanic on Myntra is a gamble. I heart things I would wear to brunch and then ask my group chat 'does this look tiny'.", "fit_uncertainty", "intent", "whatsapp_friends", "Woman 22–28 metro", "genuine", 5, 5),
+  q("f08", "Fashion community", IFA, "2026-02", "Urbanic on Myntra is a gamble. I heart things I would wear to brunch and then ask my group chat 'does this look tiny'.", "fit_uncertainty", "intent", "whatsapp_friends", "Woman 22–28 metro", "genuine", 5, 5),
   q("f09", "Play Store", PL, "2025-09", "Size recommendation says M. Reviews say size up. I will not play this game with a ₹3,000 dress. Saved for later, later never comes.", "fit_uncertainty", "intent", "abandon", "Woman 24–32 metro", "genuine", 5, 5),
   q("f10", "Threads", TW, "2026-02", "Why is there no 'how this sat on someone my height' on the wishlist? I have to open each PDP again and re-read 200 reviews.", "fit_uncertainty", "intent", "abandon", "Woman 24–32 metro", "genuine", 5, 4),
   q("f11", "App Store", AS, "2025-07", "Petite shoppers are invisible. Everything is modelled at 5'8\". I save, screenshot, send to my sister, still don't order.", "fit_uncertainty", "intent", "whatsapp_friends", "Woman 24–32 metro", "genuine", 5, 5),
@@ -54,13 +62,13 @@ export const CORPUS: Quote[] = [
   q("f13", "YouTube comments", YT, "2026-01", "Can you show the back and sitting down? I saved the trousers but I work 9 hours at a desk. Fit standing is not fit sitting.", "fit_uncertainty", "intent", "youtube_haul", "Woman 24–32 metro", "genuine", 4, 4),
   q("f14", "Trustpilot", TP, "2025-06", "Wrong size delivered twice. Now I don't buy from wishlist unless I've owned that exact brand cut before.", "fit_uncertainty", "intent", "abandon", "Woman 28–35 metro", "genuine", 5, 5),
   q("f15", "Play Store", PL, "2026-05", "Maya told me a size on the product page. When I opened wishlist a week later that explanation was gone. Just a hearted photo.", "fit_uncertainty", "intent", "abandon", "Woman 24–32 metro", "genuine", 5, 5),
-  q("f16", "Reddit", RD, "2025-04", "Pear-shaped and tired of 'true to size'. True to whose size. I keep a graveyard of saved Anarkalis.", "fit_uncertainty", "occasion", "instagram", "Woman 24–32 metro", "genuine", 5, 5),
+  q("f16", "Fashion community", FFA, "2025-04", "Pear-shaped and tired of 'true to size'. True to whose size. I keep a graveyard of saved Anarkalis.", "fit_uncertainty", "occasion", "instagram", "Woman 24–32 metro", "genuine", 5, 5),
   q("f17", "App Store", AS, "2026-01", "Cropped blazers. I have two saved. Both look boxy on the model and tiny in reviews. I will not bag either until someone like me tries them.", "fit_uncertainty", "compare_later", "youtube_haul", "Woman 24–32 metro", "genuine", 5, 4),
   q("f18", "Consumer complaints", CC, "2026-03", "Blazer was tight. Needed bigger size. Size not in stock. Non-returnable after the window games. I now save blazers and do not purchase.", "fit_uncertainty", "intent", "abandon", "Man/Woman 25–40", "genuine", 5, 5),
   q("f19", "Threads", TW, "2025-12", "Wishlist should tell me: this brand runs small in shoulders vs your last kept shirt. Instead it tells me nothing.", "fit_uncertainty", "intent", "none", "Woman 24–32 metro", "genuine", 5, 4),
   q("f20", "YouTube comments", YT, "2025-09", "I'm 5'1\". Every co-ord I save looks cute then I remember the pants will pool. I wait for a petite haul that never comes.", "fit_uncertainty", "intent", "youtube_haul", "Woman 22–28 metro", "genuine", 5, 5),
   q("f21", "Play Store", PL, "2025-08", "Bought a bodycon, returned, swore off. Still heart bodycons 'in case'. I know I won't buy. Fit fear.", "fit_uncertainty", "bookmark", "abandon", "Woman 24–32 metro", "mixed", 4, 4),
-  q("f22", "Reddit", RD, "2026-04", "Office trousers: I need to know rise and thigh. Wishlist has neither. I screenshot the size chart into Notes and still don't order.", "fit_uncertainty", "intent", "size_chart_google", "Woman 24–32 metro", "genuine", 5, 5),
+  q("f22", "Fashion community", IFA, "2026-04", "Office trousers: I need to know rise and thigh. Wishlist has neither. I screenshot the size chart into Notes and still don't order.", "fit_uncertainty", "intent", "size_chart_google", "Woman 24–32 metro", "genuine", 5, 5),
   q("f23", "App Store", AS, "2026-06", "Fit visualisation is on some PDPs. Zero of that follows the item into my wishlist. That is the actual bug.", "fit_uncertainty", "intent", "none", "Woman 24–32 metro", "genuine", 5, 4),
   q("f24", "Trustpilot", TP, "2025-10", "I am between M and L. Every saved dress is a coin flip. I postpone until I 'feel sure'. I never feel sure.", "fit_uncertainty", "intent", "whatsapp_friends", "Woman 24–32 metro", "genuine", 5, 5),
   q("f25", "Reddit", RD, "2025-01", "Maternity adjacent, long torso, whatever — Myntra models are one body. Wishlist is hope. Purchase is fear.", "fit_uncertainty", "intent", "store_tryon", "Woman 28–35 metro", "genuine", 5, 5),
@@ -69,7 +77,7 @@ export const CORPUS: Quote[] = [
   q("f28", "App Store", AS, "2025-05", "Wide-leg trousers look stunning saved. Inseam reviews are a war. I will not return trousers again.", "fit_uncertainty", "intent", "abandon", "Woman 24–32 metro", "genuine", 5, 5),
   q("f29", "Threads", TW, "2025-11", "Asked three colleagues their Myntra size in the same brand. Three answers. Wishlist stays wishlist.", "fit_uncertainty", "intent", "whatsapp_friends", "Woman 24–32 metro", "genuine", 5, 5),
   q("f30", "Consumer complaints", CC, "2025-04", "Size on the label did not match the size chart shown while buying. After that I only heart items.", "fit_uncertainty", "intent", "abandon", "Woman 24–32 metro", "genuine", 5, 5),
-  q("f31", "Reddit", RD, "2026-05", "I wish wishlist had 'people who kept this were usually size M, height 5'4\"'. I would buy this week.", "fit_uncertainty", "intent", "none", "Woman 24–32 metro", "genuine", 5, 5),
+  q("f31", "Fashion community", FFA, "2026-05", "I wish wishlist had 'people who kept this were usually size M, height 5'4\"'. I would buy this week.", "fit_uncertainty", "intent", "none", "Woman 24–32 metro", "genuine", 5, 5),
   q("f32", "Play Store", PL, "2025-12", "Stretch vs no stretch is not on the card. I saved a poplin shirt. Remembered it has no stretch. Removed from bag, left in wishlist.", "fit_uncertainty", "intent", "abandon", "Woman 24–32 metro", "genuine", 4, 4),
   q("f33", "App Store", AS, "2026-07", "Ethnic length is a different sport from western. My top M is not my kurta M. The wishlist treats them as the same heart.", "fit_uncertainty", "occasion", "size_chart_google", "Woman 24–32 metro", "genuine", 5, 5),
   q("f34", "Trustpilot", TP, "2026-04", "I don't need another model photo. I need someone with my bust-waist gap. Until then, save not buy.", "fit_uncertainty", "intent", "instagram", "Woman 24–32 metro", "genuine", 5, 5),
@@ -204,16 +212,58 @@ export const CORPUS: Quote[] = [
   q("w09", "App Store", AS, "2025-02", "Too many categories in one list. Beauty, home, clothes. I came for a shirt.", "wishlist_clutter", "intent", "abandon", "Woman 24–32 metro", "genuine", 3, 2),
   q("w10", "Threads", TW, "2026-07", "A graveyard of 200 hearts is not a funnel. It's a museum.", "wishlist_clutter", "bookmark", "abandon", "Woman 24–32 metro", "bookmark", 2, 2),
 
-  q("k01", "Reddit", RD, "2026-01", "I use wishlist like Pinterest. I am not converting and I don't want to. Stop emailing me about it.", "bookmark_only", "bookmark", "none", "Woman 24–32 metro", "bookmark", 2, 2),
+  q("k01", "Fashion community", IFA, "2026-01", "I use wishlist like Pinterest. I am not converting and I don't want to. Stop emailing me about it.", "bookmark_only", "bookmark", "none", "Woman 24–32 metro", "bookmark", 2, 2),
   q("k02", "Play Store", PL, "2025-08", "Saving is a hobby. Buying is rare. Please don't treat hearts as purchase intent.", "bookmark_only", "bookmark", "none", "Woman 22–28 metro", "bookmark", 2, 2),
   q("k03", "App Store", AS, "2026-04", "Moodboard for a vacation I might take. Not a cart.", "bookmark_only", "bookmark", "instagram", "Woman 24–32 metro", "bookmark", 2, 1),
   q("k04", "Threads", TW, "2025-10", "I heart to remember a trend, not to wear it. Different job.", "bookmark_only", "bookmark", "none", "Woman 24–32 metro", "bookmark", 2, 2),
   q("k05", "YouTube comments", YT, "2026-02", "Added everything from this haul to wishlist for inspiration. Will not buy all of it. Maybe none.", "bookmark_only", "bookmark", "youtube_haul", "Woman 22–28 metro", "bookmark", 2, 2),
-  q("k06", "Reddit", RD, "2025-03", "Bookmark vs buy later are different. Myntra has one button. That's why your conversion math is sad.", "bookmark_only", "bookmark", "none", "Woman 24–32 metro", "bookmark", 2, 2),
+  q("k06", "Fashion community", FFA, "2025-03", "Bookmark vs buy later are different. Myntra has one button. That's why your conversion math is sad.", "bookmark_only", "bookmark", "none", "Woman 24–32 metro", "bookmark", 2, 2),
   q("k07", "Play Store", PL, "2026-05", "I save celebrity looks I'll never wear. Leave me alone.", "bookmark_only", "bookmark", "instagram", "Woman 24–32 metro", "bookmark", 2, 1),
   q("k08", "App Store", AS, "2025-06", "Wishlist as a catalogue of taste for when I have money and a body I like. Neither is this month.", "bookmark_only", "bookmark", "wait_eors", "Woman 24–32 metro", "bookmark", 2, 2),
   q("k09", "Threads", TW, "2026-08", "Not everything hearted is a delayed purchase. Some of it is just pretty.", "bookmark_only", "bookmark", "none", "Woman 24–32 metro", "bookmark", 2, 1),
-  q("k10", "Reddit", RD, "2025-12", "I have a 'never buy, just admire' mental folder. The app doesn't.", "bookmark_only", "bookmark", "none", "Woman 24–32 metro", "bookmark", 2, 2),
+  q("k10", "Fashion community", IFA, "2025-12", "I have a 'never buy, just admire' mental folder. The app doesn't.", "bookmark_only", "bookmark", "none", "Woman 24–32 metro", "bookmark", 2, 2),
+
+  q("qa01", "Product Q&A", QA, "2026-05", "Q: Does this run small? Answers split between size up and true to size. I saved it after reading the thread and still have not ordered.", "fit_uncertainty", "intent", "abandon", "Woman 24–32 metro", "genuine", 5, 5),
+  q("qa02", "Product Q&A", QA, "2026-03", "Q: Is the size chart accurate? A: Chart said M, garment label was different cms. I hearted a similar cut instead of risking another return.", "size_chart_distrust", "intent", "size_chart_google", "Woman 24–32 metro", "genuine", 5, 4),
+  q("qa03", "Product Q&A", QA, "2026-01", "Q: Can I return if the seal tag is on? Nobody answers clearly. Wishlisted the saree. Will not bag until policy is a sentence.", "return_seal_tag_fear", "occasion", "whatsapp_friends", "Woman 24–32 metro", "genuine", 5, 5),
+  q("qa04", "Product Q&A", QA, "2025-11", "Q: Which of these two kurtas for a 5'3\"? The answers are 'depends'. I have both saved. I have bought neither.", "comparison_paralysis", "compare_later", "youtube_haul", "Woman 24–32 metro", "genuine", 4, 3),
+  q("qa05", "Product Q&A", QA, "2026-06", "Q: Office appropriate or too much shine? I asked my sister the same thing on WhatsApp. Still saved, not purchased.", "styling_occasion", "intent", "whatsapp_friends", "Woman 24–32 metro", "genuine", 3, 3),
+  q("qa06", "Product Q&A", QA, "2025-08", "Q: Looks cheap vs photo? Three yes, two no. I will wait for a haul. The Q&A did not close it.", "quality_doubt", "intent", "youtube_haul", "Woman 24–32 metro", "genuine", 3, 3),
+
+  q("fc01", "Fashion community", IFA, "2026-06", "On IFA we compare Myntra vs Ajio returns more than prints. I have three kurtas saved and I am waiting for a petite analog, not a coupon.", "fit_uncertainty", "compare_later", "whatsapp_friends", "Woman 24–32 metro", "genuine", 5, 4),
+  q("fc02", "Fashion community", FFA, "2026-03", "FFA thread: Indian online shopping is size chaos. I screenshot Myntra wishlist into the thread and still don't order.", "size_chart_distrust", "intent", "instagram", "Woman 24–32 metro", "genuine", 5, 4),
+  q("fc03", "Fashion community", IFA, "2025-11", "Wedding guest megathread. Half of us have the same Anarkali saved. None of us have bought it. Fit + seal tag.", "return_seal_tag_fear", "occasion", "whatsapp_friends", "Woman 24–32 metro", "genuine", 5, 5),
+  q("fc04", "Fashion community", FFA, "2026-01", "Someone asked for 'Myntra office trousers that survive 5'3\"'. I have two saved. Need rise, not another model shot.", "fit_uncertainty", "intent", "none", "Woman 24–32 metro", "genuine", 5, 4),
+  q("fc05", "Fashion community", IFA, "2026-07", "The community rule is: don't trust Myntra ethnic size. I still heart them. I buy from a store if the function is close.", "fit_uncertainty", "occasion", "store_tryon", "Woman 24–32 metro", "genuine", 5, 4),
+  q("fc06", "Fashion community", FFA, "2025-09", "Inspiration folders vs buy-later folders. Myntra has one heart. That's the conversion leak we keep describing.", "bookmark_only", "bookmark", "instagram", "Woman 24–32 metro", "bookmark", 2, 2),
+  q("fc07", "Fashion community", IFA, "2026-04", "Compare two saved shirts on fit, not on 40% off. Every haul comment section says the same thing.", "comparison_paralysis", "compare_later", "youtube_haul", "Woman 24–32 metro", "genuine", 4, 3),
+  q("fc08", "Fashion community", FFA, "2025-12", "I posted my wishlist dump. People said 'that's a moodboard'. They were right. Please don't nudge me.", "bookmark_only", "bookmark", "none", "Woman 22–28 metro", "bookmark", 2, 2),
+  q("fc09", "Fashion community", IFA, "2026-02", "Seal-tag saree talk is weekly. We save them for functions and then freeze because we cannot actually try them.", "return_seal_tag_fear", "occasion", "abandon", "Woman 24–32 metro", "genuine", 5, 5),
+  q("fc10", "Fashion community", FFA, "2026-08", "Petite Indian shoppers swapping kept vs returned stories in comments. That story belongs on the wishlist card.", "fit_uncertainty", "intent", "instagram", "Woman 24–32 metro", "genuine", 5, 5),
+
+  q("ig01", "Instagram", IG, "2026-07", "Saved this from a reel. Still don't know if M on this brand is my M. Wishlist only until a try-on near 5'4\".", "fit_uncertainty", "intent", "instagram", "Woman 24–32 metro", "genuine", 5, 5),
+  q("ig02", "Instagram", IG, "2026-05", "Comments on this Myntra haul: 'exchange-only??' I had already hearted it. Now I won't bag.", "return_seal_tag_fear", "intent", "instagram", "Woman 24–32 metro", "genuine", 5, 5),
+  q("ig03", "Instagram", IG, "2026-03", "Everyone in the comments waiting for EORS on a shirt they would wear Monday. I did the same. It's still saved.", "budget_sale_wait", "sale_wait", "wait_eors", "Woman 24–32 metro", "genuine", 5, 4),
+  q("ig04", "Instagram", IG, "2026-01", "Two kurtas in the reel. I saved both. Comments voted both. Bought neither.", "comparison_paralysis", "compare_later", "instagram", "Woman 24–32 metro", "genuine", 4, 3),
+  q("ig05", "Instagram", IG, "2025-12", "This is my Pinterest. Stop the 'items in your wishlist' story ads.", "bookmark_only", "bookmark", "instagram", "Woman 24–32 metro", "bookmark", 2, 2),
+  q("ig06", "Instagram", IG, "2026-06", "Size chart in the caption is theatre. Tell me who kept it at 5'3\".", "size_chart_distrust", "intent", "instagram", "Woman 24–32 metro", "genuine", 5, 4),
+  q("ig07", "Instagram", IG, "2026-04", "Looks cheap vs the reel lighting. Saved it. Will wait for a daylight haul.", "quality_doubt", "intent", "youtube_haul", "Woman 24–32 metro", "genuine", 3, 3),
+  q("ig08", "Instagram", IG, "2025-10", "Is this sangeet or too much? Asked in comments. Still saved, function is in three weeks.", "styling_occasion", "occasion", "instagram", "Woman 24–32 metro", "genuine", 3, 3),
+  q("ig09", "Instagram", IG, "2026-08", "Maya told me a size on the app. Came back from this reel via wishlist — only the photo left.", "fit_uncertainty", "intent", "instagram", "Woman 24–32 metro", "genuine", 5, 5),
+  q("ig10", "Instagram", IG, "2026-02", "Seal tag mentioned at the end of the reel. Should have been on the card before I hearted it.", "return_seal_tag_fear", "occasion", "abandon", "Woman 24–32 metro", "genuine", 5, 4),
+  q("ig11", "Instagram", IG, "2025-11", "I send every saved Myntra link to my sister on IG. She also doesn't know if it will fit.", "fit_uncertainty", "intent", "whatsapp_friends", "Woman 24–32 metro", "genuine", 5, 4),
+  q("ig12", "Instagram", IG, "2026-07", "Wishlist is 80 items from reels. Maybe 8 were ever a purchase. Don't email me.", "wishlist_clutter", "bookmark", "instagram", "Woman 22–28 metro", "bookmark", 3, 2),
+
+  q("qa07", "Product Q&A", QA_KURTA, "2026-07", "Q: Length on 5'3\"? Answers split. I saved the Anarkali. I have not ordered.", "fit_uncertainty", "occasion", "abandon", "Woman 24–32 metro", "genuine", 5, 5),
+  q("qa08", "Product Q&A", QA_PANT, "2026-06", "Q: Rise for desk sitting? No useful answer. Two trousers saved. Zero bagged.", "fit_uncertainty", "intent", "none", "Woman 24–32 metro", "genuine", 5, 4),
+  q("qa09", "Product Q&A", QA_BLAZ, "2026-04", "Q: Shoulders run small? Three yes. I hearted it and I am waiting for a kept analog.", "fit_uncertainty", "intent", "whatsapp_friends", "Woman 24–32 metro", "genuine", 5, 5),
+  q("qa10", "Product Q&A", QA_SAREE, "2026-03", "Q: Seal tag — can I drape at home? Seller said no. Wishlist only.", "return_seal_tag_fear", "occasion", "abandon", "Woman 24–32 metro", "genuine", 5, 5),
+  q("qa11", "Product Q&A", QA_KURTA, "2026-01", "Q: Is L in this brand my top M? Nobody knows. Ethnic vs western is the freeze.", "fit_uncertainty", "intent", "size_chart_google", "Woman 24–32 metro", "genuine", 5, 5),
+  q("qa12", "Product Q&A", QA_PANT, "2025-12", "Q: Chart said 32. Garment was not. I will not trust this chart on the next save either.", "size_chart_distrust", "intent", "abandon", "Woman 24–32 metro", "genuine", 5, 4),
+  q("qa13", "Product Q&A", QA_BLAZ, "2026-05", "Q: Exchange-only or easy return? Mixed answers. I will not bag until it is a sentence on the card.", "return_seal_tag_fear", "intent", "abandon", "Woman 24–32 metro", "genuine", 5, 4),
+  q("qa14", "Product Q&A", QA_KURTA, "2025-10", "Q: Which of these two kurtas for 5'3\" office? 'Depends'. Both saved. Neither bought.", "comparison_paralysis", "compare_later", "youtube_haul", "Woman 24–32 metro", "genuine", 4, 3),
+  q("qa15", "Product Q&A", QA_SAREE, "2026-08", "Q: Looks like the photo? Split. I left it wishlisted for a haul.", "quality_doubt", "occasion", "youtube_haul", "Woman 24–32 metro", "genuine", 3, 3),
+  q("qa16", "Product Q&A", QA_PANT, "2026-02", "Q: True to size in M? Half say size up. That is why it sits in wishlist.", "fit_uncertainty", "intent", "abandon", "Woman 24–32 metro", "genuine", 5, 4),
 ];
 
 export function quotesFor(barrier: BarrierId): Quote[] {

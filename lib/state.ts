@@ -65,6 +65,7 @@ export function effectiveBucket(id: string, state: AppState): Bucket {
   const o = state.overrides[id];
   if (o?.removed) return "exploring";
   if (o?.bucket) return o.bucket;
+  if (p.saveReason === "Just saving") return "exploring";
   if (!state.profile) return p.defaultBucket;
   if (p.returnClass === "seal_tag" && p.defaultBucket === "exploring") return "exploring";
   if (p.oosSizes.includes(p.suggestedSize)) return "exploring";

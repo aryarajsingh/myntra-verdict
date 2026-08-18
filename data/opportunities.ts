@@ -26,7 +26,7 @@ export const OPPORTUNITIES: Opportunity[] = [
     score: 400,
     disqualifiedMonetary: false,
     whyScore:
-      "Seal tags, exchange-only ethnic, warehouse drop, rejected reverse pickup. A wrong size feels like losing money. We can surface policy; we cannot rewrite it.",
+      "Seal tags, exchange-only ethnic, warehouse drop, rejected reverse pickup. A wrong size feels like losing money. I can surface policy; I cannot rewrite it.",
     verdictAction: "Co-primary module: return / seal-tag card on every saved SKU.",
     metricLink:
       "Removes the ‘I’ll try it if I can send it back’ freeze that delays bag-add past 30 days.",
@@ -100,7 +100,7 @@ export const OPPORTUNITIES: Opportunity[] = [
     disqualifiedMonetary: true,
     whyScore:
       "Highest-frequency Indian behaviour. Disqualified: non-monetary solvability = 1 under the no-incentive constraint.",
-    verdictAction: "Do not build. Rank it so evaluators see we saw it and refused it.",
+    verdictAction: "Do not build. Rank it so evaluators see I saw it and refused it.",
     metricLink:
       "Would move NS with coupons. Illegal for this brief. Ranked, not shipped.",
   },

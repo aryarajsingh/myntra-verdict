@@ -1,5 +1,6 @@
 import type { BarrierId } from "@/data/types";
 import { OPPORTUNITIES } from "@/data/opportunities";
+import { cosineScores, type VecModel } from "@/lib/vector";
 
 type Rule = { phrase: string; w: number };
 
@@ -131,9 +132,31 @@ export type Classification = {
   breakdown: BarrierScore[];
   intentGuess: "genuine" | "bookmark" | "mixed";
   productCall: string;
+  job: "intent" | "bookmark" | "sale_wait" | "occasion" | "compare_later";
+  workaround:
+    | "whatsapp_friends"
+    | "youtube_haul"
+    | "instagram"
+    | "size_chart_google"
+    | "store_tryon"
+    | "order_two_sizes"
+    | "wait_eors"
+    | "abandon"
+    | "none";
+  severity: 1 | 2 | 3 | 4 | 5;
+  metricProximity: 1 | 2 | 3 | 4 | 5;
+  extract: {
+    job: Classification["job"];
+    barrier: BarrierId;
+    intent: Classification["intentGuess"];
+    workaround: Classification["workaround"];
+    severity: 1 | 2 | 3 | 4 | 5;
+    metricProximity: 1 | 2 | 3 | 4 | 5;
+    productCall: string;
+  };
 };
 
-export function classifyText(text: string): Classification {
+export function classifyText(text: string, model?: VecModel | null): Classification {
   const lower = text.toLowerCase();
   const breakdown: BarrierScore[] = (Object.keys(RULES) as BarrierId[]).map((id) => {
     const hits: string[] = [];
@@ -155,24 +178,49 @@ export function classifyText(text: string): Classification {
     };
   });
 
+  const kwWeight = new Map(breakdown.map((b) => [b.id, b.weight]));
+  const maxKw = Math.max(1, ...breakdown.map((b) => b.weight));
+  const sims = model ? cosineScores(text, model) : [];
+  const simMap = new Map(sims.map((s) => [s.id, s.cosine]));
+
+  for (const row of breakdown) {
+    const kw = (kwWeight.get(row.id) ?? 0) / maxKw;
+    const cos = simMap.get(row.id) ?? 0;
+    const blended = model ? 0.48 * kw + 0.52 * Math.max(0, cos) : kw;
+    row.weight = Math.round(blended * 100);
+  }
+
+  const saleKw = kwWeight.get("budget_sale_wait") ?? 0;
+  if (saleKw >= 5) {
+    const sale = breakdown.find((b) => b.id === "budget_sale_wait");
+    if (sale) sale.weight = Math.max(sale.weight, 100);
+  }
+
   breakdown.sort((a, b) => b.weight - a.weight || b.opportunityScore - a.opportunityScore);
+
   const top = breakdown[0];
   const second = breakdown[1];
   const barrier: BarrierId = top.weight === 0 ? "fit_uncertainty" : top.id;
   const opp = OPPORTUNITIES.find((o) => o.id === barrier)!;
+  const gap = top.weight - (second?.weight ?? 0);
   const confidence: Classification["confidence"] =
-    top.weight === 0 ? "low" : top.weight >= 6 || top.weight - (second?.weight ?? 0) >= 3 ? "high" : "medium";
+    top.weight === 0 ? "low" : top.weight >= 55 && gap >= 8 ? "high" : top.weight >= 30 ? "medium" : "low";
 
-  const bookmarkW = breakdown.find((b) => b.id === "bookmark_only")?.weight ?? 0;
-  const saleW = breakdown.find((b) => b.id === "budget_sale_wait")?.weight ?? 0;
+  const bookmarkW = kwWeight.get("bookmark_only") ?? 0;
+  const saleW = saleKw;
   const intentGuess: Classification["intentGuess"] =
     bookmarkW >= 4 ? "bookmark" : saleW >= 4 && top.id === "budget_sale_wait" ? "mixed" : "genuine";
 
   const productCall = opp.disqualifiedMonetary
-    ? "Rank it. Do not ship. Constraint forbids paying for conversion."
+    ? "DISQUALIFY. Rank it. Do not ship. Constraint forbids paying for conversion."
     : barrier === "bookmark_only"
       ? "Quarantine in Still exploring. Do not convert this population."
       : opp.verdictAction;
+
+  const job = guessJob(lower, barrier);
+  const workaround = guessWorkaround(lower);
+  const severity = (Math.min(5, Math.max(1, Math.round((kwWeight.get(barrier) ?? 0) / 3) || opp.s)) as 1 | 2 | 3 | 4 | 5);
+  const metricProximity = opp.m as 1 | 2 | 3 | 4 | 5;
 
   return {
     barrier,
@@ -186,7 +234,55 @@ export function classifyText(text: string): Classification {
     breakdown,
     intentGuess,
     productCall,
+    job,
+    workaround,
+    severity,
+    metricProximity,
+    extract: {
+      job,
+      barrier,
+      intent: intentGuess,
+      workaround,
+      severity,
+      metricProximity,
+      productCall,
+    },
   };
+}
+
+const JOB_PHRASES: { id: Classification["job"]; phrases: string[] }[] = [
+  { id: "sale_wait", phrases: ["sale", "eors", "discount", "price drop", "cashback", "coupon"] },
+  { id: "bookmark", phrases: ["pinterest", "moodboard", "just saving", "inspiration", "not converting"] },
+  { id: "compare_later", phrases: ["which one", "similar", "shortlist", "compare", "can't decide"] },
+  { id: "occasion", phrases: ["wedding", "mehendi", "sangeet", "function", "occasion"] },
+];
+
+function guessJob(lower: string, barrier: BarrierId): Classification["job"] {
+  for (const row of JOB_PHRASES) {
+    if (row.phrases.some((p) => lower.includes(p))) return row.id;
+  }
+  if (barrier === "bookmark_only") return "bookmark";
+  if (barrier === "budget_sale_wait") return "sale_wait";
+  if (barrier === "comparison_paralysis") return "compare_later";
+  if (barrier === "styling_occasion") return "occasion";
+  return "intent";
+}
+
+const WORK_PHRASES: { id: Classification["workaround"]; phrases: string[] }[] = [
+  { id: "whatsapp_friends", phrases: ["whatsapp", "sister", "group chat", "screenshot", "friends"] },
+  { id: "youtube_haul", phrases: ["youtube", "haul"] },
+  { id: "instagram", phrases: ["instagram", "insta"] },
+  { id: "size_chart_google", phrases: ["google", "size chart"] },
+  { id: "store_tryon", phrases: ["store", "mall", "try on"] },
+  { id: "order_two_sizes", phrases: ["two sizes", "ordered two"] },
+  { id: "wait_eors", phrases: ["eors", "wait for the sale", "waiting for the sale"] },
+];
+
+function guessWorkaround(lower: string): Classification["workaround"] {
+  for (const row of WORK_PHRASES) {
+    if (row.phrases.some((p) => lower.includes(p))) return row.id;
+  }
+  return "abandon";
 }
 
 export const SAMPLE_QUOTES = [
@@ -205,5 +301,17 @@ export const SAMPLE_QUOTES = [
   {
     label: "Bookmark",
     text: "I use wishlist like Pinterest. I am not converting and I don't want to. Stop emailing me about it.",
+  },
+  {
+    label: "Compare",
+    text: "I have three similar shirts saved and I'm paralysed. Can't decide which one. Shortlist is stuck.",
+  },
+  {
+    label: "Social",
+    text: "I screenshot and send to my sister. Group chat still cannot tell me if it will fit. I just save.",
+  },
+  {
+    label: "Instagram reel",
+    text: "Saved this from an Instagram reel. Comments say exchange only. I still don't know if it will fit. Wishlist only.",
   },
 ];

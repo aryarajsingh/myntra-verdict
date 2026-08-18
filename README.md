@@ -1,19 +1,16 @@
-# Verdict — Myntra Growth case (concept)
+# Verdict — Myntra Growth case
 
-**Not the Myntra app.** No coupons. No login.
+**Submit this URL only:** https://myntra-verdict.vercel.app/
 
-## Submit these three
+Not GitHub Pages. Not this README. The live site is the case.
 
-1. **AI discovery engine** — https://aryarajsingh.github.io/myntra-verdict/discovery/
-2. **10-slide PDF** — https://aryarajsingh.github.io/myntra-verdict/Verdict-Wishlist-Deck.pdf
-3. **Deployed MVP** — https://aryarajsingh.github.io/myntra-verdict/wishlist/
+Not the Myntra app. No coupons. Source: https://github.com/aryarajsingh/myntra-verdict
 
-Index: https://aryarajsingh.github.io/myntra-verdict/
+## What to click
 
-## How to test in five minutes
+1. Discovery → **Run extracts**. **Test the model** → Fit freeze and EORS wait.
+2. Research → interviews, then survey (workbook). You don’t need to fill the questionnaire.
+3. Wishlist → a Check fit item → See Verdict. Seal-tag stays in Still exploring.
+4. Deck → 10 slides. PDF is on that page.
 
-1. Discovery: ranked table is the finding. **Try a review → Try: EORS wait** — it must say DISQUALIFIED. **Try: Fit freeze** — it must pick fit.
-2. MVP: Check fit group → ONLY cropped blazer or Libas Anarkali → See Verdict. Seal-tag saree stays in Still exploring with no bag push.
-3. Deck: 10 slides, 14pt, titles are the message. PDF links are absolute.
-
-Interviews + guide: https://aryarajsingh.github.io/myntra-verdict/research/
+Extract is Groq on Vercel (`POST /api/extract`). Ranking stays on the quotes I coded. Sale-wait is forced DISQUALIFY.

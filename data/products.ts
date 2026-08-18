@@ -142,7 +142,7 @@ export const PRODUCTS: Product[] = [
     category: "dress",
     occasion: "Unclear",
     saveReason: "Just saving",
-    defaultBucket: "check_fit",
+    defaultBucket: "exploring",
     suggestedSize: "M",
     altSize: "L",
     returnClass: "easy_return",

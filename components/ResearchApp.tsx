@@ -1,141 +1,131 @@
 "use client";
 
+import Link from "next/link";
+import { useMemo, useState } from "react";
+import { ResearchCharts } from "@/components/ResearchCharts";
 import { INTERVIEWS } from "@/data/interviews";
+import { LINKS } from "@/lib/links";
+import { offAppRows, peopleForBarrier, SURVEY_N } from "@/lib/research";
 import { OPPORTUNITIES } from "@/data/opportunities";
+import { SURVEY_STATS } from "@/data/survey";
+import type { BarrierId } from "@/data/types";
+
+const BRIEF_Q = [
+  { key: "whySaved" as const, label: "Why they saved each item" },
+  { key: "stillIntend" as const, label: "Whether they still intend to purchase it" },
+  { key: "stopping" as const, label: "What is stopping them" },
+  { key: "wouldPurchase" as const, label: "What would make them purchase it" },
+  { key: "infoNeeded" as const, label: "What information they still need" },
+  { key: "alternatives" as const, label: "Whether they are considering alternatives" },
+  { key: "outsideApp" as const, label: "What happens outside the app before they decide" },
+  { key: "overcome" as const, label: "How they currently overcome uncertainty" },
+];
 
 export function ResearchApp() {
+  const [who, setWho] = useState(INTERVIEWS[0].id);
+  const [barrier, setBarrier] = useState<BarrierId | null>(null);
+  const [offFilter, setOffFilter] = useState<string | null>(null);
+  const current = INTERVIEWS.find((i) => i.id === who) ?? INTERVIEWS[0];
+
+  const highlight = useMemo(() => {
+    const fromBarrier = barrier ? peopleForBarrier(barrier) : null;
+    const fromOff = offFilter ? (offAppRows().find((r) => r.id === offFilter)?.people ?? null) : null;
+    const a = fromBarrier && fromBarrier.length ? fromBarrier : null;
+    const b = fromOff && fromOff.length ? fromOff : null;
+    if (a && b) return a.filter((id) => b.includes(id));
+    return a ?? b;
+  }, [barrier, offFilter]);
+
+  function pickPerson(id: string) {
+    setWho(id);
+    document.getElementById("interview-card")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function onBarrier(id: BarrierId | null) {
+    setBarrier(id);
+    if (!id) return;
+    const first = peopleForBarrier(id)[0];
+    if (first) pickPerson(first);
+  }
+
   return (
-    <div className="wide-shell" style={{ padding: 24 }}>
-      <p className="hub-kicker">Supporting artefact · primary research</p>
-      <h1 style={{ fontSize: 18, margin: "8px 0" }}>Six metro working women leave Myntra to decide if it will fit</h1>
-      <p>
-        6 interviews, 35–45 minutes. Screener: woman 24–32, metro, Myntra at least weekly, 15+ items currently
-        wishlisted, mixed workwear and occasion. Guide below. Full notes after the synthesis.
+    <div className="hub research">
+      <p className="hub-kicker">Research</p>
+      <h1 className="display sm">Six interviews. Survey on the same freeze.</h1>
+      <p className="hub-lede">
+        Metro working women, 24–32. Same eight brief prompts in each write-up. Survey is {SURVEY_STATS.n} rows,{" "}
+        {SURVEY_N} in-target — a count, not a replacement for the rooms.
       </p>
-      <h2 style={{ fontSize: 16, margin: "20px 0 8px" }}>Discussion guide</h2>
-      <ol>
-        <li>Walk me through the last three things you hearted. Why that one, that day?</li>
-        <li>Do you still intend to buy it in the next month? What would make that a no?</li>
-        <li>What is stopping you — fit, price, occasion, quality, returns, just saving?</li>
-        <li>What information do you still need that the app does not give you on the wishlist?</li>
-        <li>Are you comparing it with other saved pieces? How do you choose?</li>
-        <li>What happens outside Myntra before you decide (WhatsApp, hauls, store, Google)?</li>
-        <li>How do you reduce the risk of a wrong size today?</li>
-        <li>If returns were painful last time, how did that change what you save vs buy?</li>
-      </ol>
-      <h2 style={{ fontSize: 16, margin: "20px 0 8px" }}>What changed after the interviews</h2>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Hypothesis from WhyWait</th>
-            <th>What interviews did</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Fit is the legal #1</td>
-            <td>Confirmed — but the failure is specifically <b>at revisit</b>. PDP advice does not travel with the heart.</td>
-          </tr>
-          <tr>
-            <td>Return/seal-tag is co-primary</td>
-            <td>Confirmed as time-cost and money-loss, not policy trivia. Sneha will pay full price if the Sunday is safe.</td>
-          </tr>
-          <tr>
-            <td>Sale-wait is the frequent #1</td>
-            <td>Priya named sale as <b>risk-offset</b>, not greed. Still illegal to ship. Do not confuse with the job.</td>
-          </tr>
-          <tr>
-            <td>Bookmarks pollute the funnel</td>
-            <td>Kavya: ~10 of 96 items were ever intent. Converting her is a false north star.</td>
-          </tr>
-          <tr>
-            <td>Comparison is secondary</td>
-            <td>Meera will buy one of three trousers if compared on fit, not discount.</td>
-          </tr>
-        </tbody>
-      </table>
-      <h2 style={{ fontSize: 16, margin: "20px 0 8px" }}>Synthesis</h2>
-      <ul>
-        <li>
-          <b>Lock:</b> Fit uncertainty at revisit + return/seal-tag fear. Size advice from PDP does not travel with the
-          saved card.
-        </li>
-        <li>
-          <b>Do not serve:</b> Bookmark-only (Kavya). Nagging them poisons the product.
-        </li>
-        <li>
-          <b>Disconfirming:</b> Sale-wait is real (Priya named it as risk-offset, not greed). Disqualified by constraint.
-        </li>
-        <li>
-          <b>Comparison:</b> Meera will buy one of three trousers if compared on fit, not discount.
-        </li>
-      </ul>
-      <div style={{ overflowX: "auto", marginTop: 16 }}>
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Person</th>
-              <th>Still intend?</th>
-              <th>Primary freeze</th>
-              <th>Outside app</th>
-              <th>Would purchase if</th>
-            </tr>
-          </thead>
-          <tbody>
-            {INTERVIEWS.map((i) => (
-              <tr key={i.id}>
-                <td>
-                  {i.name}, {i.age}, {i.city}
-                  <div className="muted">{i.job}</div>
-                </td>
-                <td>{i.stillIntend}</td>
-                <td>{OPPORTUNITIES.find((o) => o.id === i.barrier)?.name}</td>
-                <td>{i.outsideApp}</td>
-                <td>{i.wouldPurchase}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+      <div className="person-nav" role="tablist" aria-label="Respondents">
+        {INTERVIEWS.map((i) => (
+          <button
+            key={i.id}
+            type="button"
+            role="tab"
+            aria-selected={who === i.id}
+            className={`person-chip ${who === i.id ? "on" : ""} ${highlight && !highlight.includes(i.id) ? "dim" : ""}`}
+            onClick={() => pickPerson(i.id)}
+          >
+            {i.name.split(" ")[0]}
+            <span>
+              {i.city} · {OPPORTUNITIES.find((o) => o.id === i.barrier)?.name.split(" ")[0]}
+            </span>
+          </button>
+        ))}
       </div>
-      {INTERVIEWS.map((i) => (
-        <article key={i.id} className="card" style={{ marginTop: 16 }}>
-          <h2 style={{ fontSize: 16 }}>
-            {i.name} · {i.age} · {i.city} · {i.job}
+
+      <article id="interview-card" className="interview-hero">
+        <header>
+          <h2>
+            {current.name} · {current.age} · {current.city}
           </h2>
           <p className="muted">
-            {i.myntraUse} · {i.wishlistCount}
+            {current.job} · {current.myntraUse} · {current.wishlistCount}
           </p>
-          <p style={{ marginTop: 8 }}>
-            <b>Why saved.</b> {i.whySaved}
+          <p className="freeze">Freeze: {OPPORTUNITIES.find((o) => o.id === current.barrier)?.name}</p>
+        </header>
+        {BRIEF_Q.map((q) => (
+          <p key={q.key}>
+            <b>{q.label}.</b> {current[q.key]}
           </p>
-          <p>
-            <b>Still intend?</b> {i.stillIntend}
-          </p>
-          <p>
-            <b>Stopping.</b> {i.stopping}
-          </p>
-          <p>
-            <b>Would purchase if.</b> {i.wouldPurchase}
-          </p>
-          <p>
-            <b>Info still needed.</b> {i.infoNeeded}
-          </p>
-          <p>
-            <b>Alternatives.</b> {i.alternatives}
-          </p>
-          <p>
-            <b>Outside the app.</b> {i.outsideApp}
-          </p>
-          <p>
-            <b>How they cope.</b> {i.overcome}
-          </p>
-          {i.quotes.map((q) => (
-            <blockquote key={q} className="quote">
-              {q}
-            </blockquote>
-          ))}
-        </article>
-      ))}
+        ))}
+        {current.quotes.map((q) => (
+          <blockquote key={q} className="quote">
+            {q}
+          </blockquote>
+        ))}
+      </article>
+
+      <p className="survey-link-row">
+        <Link href="/survey/">Survey</Link>
+        {" — "}
+        questions and workbook ({SURVEY_STATS.n} rows). Charts below use the in-target cut.
+      </p>
+
+      <ResearchCharts barrier={barrier} onBarrier={onBarrier} offFilter={offFilter} onOffFilter={setOffFilter} />
+
+      <h2 className="hub-sec">What I take from this</h2>
+      <div className="research-take">
+        <p>
+          The freeze is at wishlist revisit, not at discovery. Ananya: the size story was on the PDP and is gone on the
+          saved card. Survey: {SURVEY_STATS.q10Yes} of {SURVEY_N} say the same.
+        </p>
+        <p>
+          Fit is the plurality. 2 of 6 rooms, {SURVEY_STATS.q3Fit} of {SURVEY_N} survey. Return / seal-tag is next (Riya,
+          Sneha; {SURVEY_STATS.q3Return} survey). Sale shows up ({SURVEY_STATS.q3Sale} survey). Priya uses sale as
+          risk-offset, not greed. I still can’t ship a coupon, so it’s DISQUALIFIED.
+        </p>
+        <p>
+          {SURVEY_STATS.q5Legal} of {SURVEY_N} would buy this week if they got a fit analog and the return policy in
+          words. {SURVEY_STATS.q5CouponOnly} said coupon only. Kavya is the bookmark warning: ~10 of 96 items were ever
+          intent — don’t bag-CTA a moodboard.
+        </p>
+        <p>
+          They leave the app to decide (WhatsApp, hauls, a tape on a kept pair). If Verdict doesn’t sit on the saved
+          item, the 30-day window is already gone.
+        </p>
+      </div>
     </div>
   );
 }

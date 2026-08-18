@@ -1,14 +1,15 @@
 import type { NextConfig } from "next";
 
-const basePath = process.env.GITHUB_PAGES === "1" ? "/myntra-verdict" : "";
+const site =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "https://myntra-verdict.vercel.app");
 
 const nextConfig: NextConfig = {
-  output: "export",
-  trailingSlash: true,
   images: { unoptimized: true },
-  basePath,
   env: {
-    NEXT_PUBLIC_BASE_PATH: basePath,
+    NEXT_PUBLIC_SITE_URL: site,
   },
 };
 

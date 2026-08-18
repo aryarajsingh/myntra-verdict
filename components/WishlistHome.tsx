@@ -25,7 +25,7 @@ const FIT_HELP: Record<Profile["fitPref"], string> = {
 function Header({ bagCount }: { bagCount: number }) {
   return (
     <header className="header">
-      <span className="icon-btn" aria-hidden />
+      <span className="header-brand">Saved</span>
       <h1>Wishlist</h1>
       <Link href="/bag" className="icon-btn bag-badge" aria-label={`Bag, ${bagCount} items`}>
         Bag
@@ -40,6 +40,7 @@ export function WishlistHome() {
   const [step, setStep] = useState<0 | 1 | 2 | 3 | 4>(0);
   const [draft, setDraft] = useState<Partial<Profile>>(DEMO_PROFILE);
   const [filter, setFilter] = useState<"all" | Bucket>("all");
+  const [hint, setHint] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -198,22 +199,28 @@ export function WishlistHome() {
     <div className="app-shell">
       <Header bagCount={state.bag.length} />
       <div className="pad">
-        <p className="eval-strip">MVP · You are a shopper. Open <b>See Verdict</b> on a Check fit item (blazer or Anarkali).</p>
-        <p className="muted">{visible.length} saved</p>
-        <p style={{ margin: "4px 0 8px", fontWeight: 700 }}>
-          Each card has a Verdict: Ready, Check fit, or Still exploring.
-        </p>
-        <p style={{ margin: "0 0 12px" }}>Grouped by how ready each piece looks for you — not by discount.</p>
-        <p className="muted">
-          Demo profile · Tops {state.profile?.top} · Bottoms {state.profile?.bottom} · Ethnic {state.profile?.ethnic} ·{" "}
-          {state.profile?.height} · {state.profile?.fitPref} ·{" "}
+        {hint ? (
+          <p className="hint-bar">
+            <span>
+              Try a <b>Check fit</b> piece — blazer or Anarkali — and open Verdict.
+            </span>
+            <button type="button" onClick={() => setHint(false)} aria-label="Dismiss">
+              ×
+            </button>
+          </p>
+        ) : null}
+        <div className="wl-meta">
+          <p>
+            {visible.length} saved · Tops {state.profile?.top} · Bottoms {state.profile?.bottom} · Ethnic{" "}
+            {state.profile?.ethnic} · {state.profile?.height}
+          </p>
           <button className="text-btn" type="button" onClick={() => setStep(2)}>
             Edit sizes
           </button>
-        </p>
-        <div className="filters">
+        </div>
+        <div className="seg">
           {(["all", "ready", "check_fit", "exploring"] as const).map((f) => (
-            <button key={f} type="button" className={`filter ${filter === f ? "on" : ""}`} onClick={() => setFilter(f)}>
+            <button key={f} type="button" className={filter === f ? "on" : ""} onClick={() => setFilter(f)}>
               {f === "all" ? "All" : f === "ready" ? "Ready" : f === "check_fit" ? "Check fit" : "Still exploring"}
             </button>
           ))}

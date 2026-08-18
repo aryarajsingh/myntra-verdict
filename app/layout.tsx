@@ -1,25 +1,38 @@
 import type { ReactNode } from "react";
-import { Assistant } from "next/font/google";
-import { PrototypeBanner } from "@/components/PrototypeBanner";
+import { Fraunces, Outfit } from "next/font/google";
+import { CaseCloser } from "@/components/CaseCloser";
+import { TourProvider } from "@/components/LayoutTour";
+import { SiteNav } from "@/components/SiteNav";
 import "./globals.css";
 
-const assistant = Assistant({
+const outfit = Outfit({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
+  variable: "--font-ui",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  display: "swap",
+  variable: "--font-display",
 });
 
 export const metadata = {
   title: "Verdict — Myntra Growth case",
-  description: "Wishlist-to-purchase in 30 days. Concept prototype. Not the Myntra app.",
+  description: "NextLeap case: wishlist → 30-day purchase, no coupons. Not the Myntra app.",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className={assistant.className}>
-        <PrototypeBanner />
-        {children}
+    <html lang="en" className={`${outfit.variable} ${fraunces.variable}`}>
+      <body className={outfit.className}>
+        <TourProvider>
+          <SiteNav />
+          {children}
+          <CaseCloser />
+        </TourProvider>
       </body>
     </html>
   );

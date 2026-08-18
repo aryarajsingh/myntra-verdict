@@ -1,0 +1,26 @@
+{
+  "n": 48,
+  "inTarget": 36,
+  "q3Fit": 14,
+  "q3Return": 8,
+  "q3Chart": 3,
+  "q3Compare": 2,
+  "q3Sale": 6,
+  "q3Bookmark": 2,
+  "q3Occasion": 1,
+  "q3Quality": 0,
+  "q3Clutter": 0,
+  "q10Yes": 27,
+  "q12Moodboard": 2,
+  "q2Yes": 28,
+  "q5Legal": 34,
+  "q5CouponOnly": 0,
+  "cities": [
+    "Bengaluru",
+    "Hyderabad",
+    "Delhi",
+    "Gurugram",
+    "Noida",
+    "Coimbatore"
+  ]
+}

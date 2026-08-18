@@ -1,0 +1,12 @@
+field,in_target_logic,q3_code,notes
+S2,Must be Woman for target,,"Keep all genders in the full file. Target cut is women only."
+S3,Must be 24–32,,"Under 24 and 33+ are the segment-diff rows."
+S4,"Bengaluru / Hyderabad / Delhi / Gurugram / Noida / Coimbatore",,Mumbai / Pune / non-metro are the segment-diff rows.
+S5,15–40 or 41–80 or 81+, ,1–14 is too shallow vs interview screener.
+S6,Yes,,Recent stall.
+S7,Most days or About weekly,,
+Q3,,fit="I don’t know if it will fit me / this brand’s cut"; return="I’m worried about returns"; chart="I don’t trust the size chart"; compare="I can’t choose between"; quality="fabric / quality"; occasion="when or where I’d wear it"; sale="waiting for a sale"; clutter="wishlist is a mess"; bookmark="never really going to buy it",Forced primary. Sale stays DISQUALIFIED even if it wins frequency.
+Q5,,legal_fit = kept-vs-returned story; legal_policy = return in words; legal_persist = suggested size stays; legal_compare = side-by-side on fit; illegal = coupon; social = friend; none = don’t intend,Compare legal vs illegal levers inside the same person.
+Q8,,off_app = any of WhatsApp YouTube Instagram Google store two-sizes wait,Nothing = decided in-app.
+Q10a,,mechanism_yes = Yes,Supports Verdict on the saved card.
+Q12,,intent / mix / bookmark,Bookmark → Still exploring. Do not convert.
