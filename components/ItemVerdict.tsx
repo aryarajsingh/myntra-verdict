@@ -7,6 +7,7 @@ import { productById, PRODUCTS } from "@/data/products";
 import { ProductArt } from "./ProductArt";
 import { PolicyChip, StatusChip } from "./StatusChip";
 import { DEFAULT_STATE, DEMO_PROFILE, effectiveBucket, loadState, saveState, track, type AppState } from "@/lib/state";
+import { MvpStrip } from "@/components/MvpStrip";
 
 const CHIPS = [
   "Does this run small?",
@@ -112,6 +113,8 @@ export function ItemVerdict() {
   }
 
   return (
+    <>
+    <MvpStrip line="This card is Verdict: kept/exchanged/returned + a cautious size + return in words. Not another PDP." />
     <div className="app-shell">
       <header className="header">
         <button className="icon-btn" type="button" onClick={() => router.push("/wishlist")} aria-label="Back">
@@ -474,5 +477,6 @@ export function ItemVerdict() {
         </div>
       ) : null}
     </div>
+    </>
   );
 }

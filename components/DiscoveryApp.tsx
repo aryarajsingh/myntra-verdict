@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from "react";
 import { CORPUS, quotesFor } from "@/data/corpus";
 import { OPPORTUNITIES } from "@/data/opportunities";
 import { BriefQuestions, SegmentsPanel } from "@/components/BriefQuestions";
-import { Modal } from "@/components/Modal";
 import { HBars, Scatter, Stacked } from "@/components/Viz";
 import { SAMPLE_QUOTES, type Classification } from "@/lib/classify";
 import { EXTRACT_PROMPT } from "@/data/extract-prompt";
@@ -17,29 +16,37 @@ import { buildVecModel, type VecModel } from "@/lib/vector";
 import type { BarrierId } from "@/data/types";
 import { useTour } from "@/components/LayoutTour";
 
-const NODES: { id: PipeStage; t: string; d: string }[] = [
-  { id: "ingest", t: "Ingest", d: "Load the extract schema. Quotes are already coded for scoring." },
-  { id: "vector", t: "Vector", d: "Token overlap on the coded set. Similarity only — not the rank." },
-  { id: "extract", t: "Extract", d: "Groq returns JSON for each sample quote. Same schema as extract-prompt.md." },
-  { id: "score", t: "Score", d: "F × S × M × N from the coded panel. The model does not invent frequency." },
-  { id: "policy", t: "Policy", d: "If the only fix is paying the user, N=1. DISQUALIFY." },
-  { id: "rank", t: "Rank", d: "Highest legal score: fit, then return/seal-tag. Sale is shown and dropped." },
-];
+const SHORT: Record<BarrierId, string> = {
+  fit_uncertainty: "Fit",
+  return_seal_tag_fear: "Return / seal-tag",
+  size_chart_distrust: "Size chart",
+  comparison_paralysis: "Compare",
+  quality_doubt: "Quality",
+  styling_occasion: "Occasion",
+  budget_sale_wait: "Sale wait",
+  wishlist_clutter: "Clutter",
+  bookmark_only: "Bookmark",
+};
 
-type Panel = "board" | "try" | "brief" | "method";
+function expectFor(id: BarrierId) {
+  return id === "budget_sale_wait" ? `${SHORT[id]} · DISQ` : SHORT[id];
+}
+
+type Panel = "try" | "board" | "brief" | "method";
+type Shot = { label: string; gold: BarrierId; pred: BarrierId; disq: boolean; ok: boolean };
 
 export function DiscoveryApp() {
   const tour = useTour();
   const stats = corpusStats();
   const [running, setRunning] = useState(false);
-  const [stage, setStage] = useState<PipeStage | null>(null);
+  const [calling, setCalling] = useState(false);
   const [done, setDone] = useState<PipeResult | null>(null);
+  const [shots, setShots] = useState<Shot[]>([]);
   const [logs, setLogs] = useState<PipeLog[]>([]);
   const [tick, setTick] = useState({ i: 0, n: LIVE_BATTERY.length });
   const [model, setModel] = useState<VecModel | null>(null);
   const [picked, setPicked] = useState<BarrierId>("fit_uncertainty");
-  const [panel, setPanel] = useState<Panel>("board");
-  const [node, setNode] = useState<PipeStage | null>(null);
+  const [panel, setPanel] = useState<Panel>("try");
   const [paste, setPaste] = useState(SAMPLE_QUOTES[0].text);
   const [result, setResult] = useState<Classification | null>(null);
   const [sourceFilter, setSourceFilter] = useState("All");
@@ -52,6 +59,7 @@ export function DiscoveryApp() {
   const intent = mixOf((c) => c.intent);
   const coverage = sourceCoverage();
   const opp = OPPORTUNITIES.find((o) => o.id === picked)!;
+  const goldForPaste = LIVE_BATTERY.find((s) => s.text === paste);
 
   useEffect(() => {
     const h = window.location.hash.replace("#", "");
@@ -84,16 +92,8 @@ export function DiscoveryApp() {
     const t0 = Date.now();
     const n = LIVE_BATTERY.length;
     setTick({ i: 0, n });
-    setStage("ingest");
-    pushLog(t0, "ingest", `POST /api/extract × ${n} sample quotes`);
-    pushLog(t0, "ingest", `extract prompt ${EXTRACT_PROMPT.length} chars`, true);
-    pushLog(t0, "ingest", `${CORPUS.length} quotes already coded for F×S×M×N`, true);
-
-    setStage("vector");
-    pushLog(t0, "vector", "TF–IDF stays on the coded set — scores are not model votes");
-
-    setStage("extract");
-    pushLog(t0, "extract", `Groq, n=${n}`);
+    setShots([]);
+    pushLog(t0, "extract", `POST /api/extract × ${n}`);
 
     const predCount: Record<string, number> = {};
     const goldCount: Record<string, number> = {};
@@ -105,6 +105,7 @@ export function DiscoveryApp() {
     let agree = 0;
     let provider = "none";
     let modelName = "unset";
+    const rows: Shot[] = [];
 
     for (let i = 0; i < LIVE_BATTERY.length; i++) {
       const row = LIVE_BATTERY[i];
@@ -123,28 +124,25 @@ export function DiscoveryApp() {
       predCount[json.barrier] = (predCount[json.barrier] ?? 0) + 1;
       const hit = json.barrier === row.gold;
       if (hit) agree += 1;
+      const shot: Shot = {
+        label: row.label,
+        gold: row.gold,
+        pred: json.barrier,
+        disq: Boolean(json.disqualifiedMonetary),
+        ok: hit,
+      };
+      rows.push(shot);
+      setShots([...rows]);
       pushLog(
         t0,
         "extract",
-        `${provider}/${modelName} ${json.runtime?.ms ?? "?"}ms  ${row.label} → ${json.barrier}${
-          json.disqualifiedMonetary ? " DISQ" : ""
-        } ${hit ? "✓" : "≠ " + row.gold}`,
+        `${row.label} → ${SHORT[json.barrier]}${json.disqualifiedMonetary ? " DISQ" : ""} ${hit ? "✓" : "≠ " + SHORT[row.gold]}`,
         hit,
       );
       setTick({ i: i + 1, n });
     }
 
-    setStage("score");
-    for (const o of OPPORTUNITIES.slice(0, 4)) {
-      pushLog(t0, "score", `${o.name}  ${o.f}×${o.s}×${o.m}×${o.n} = ${o.score}${o.disqualifiedMonetary ? " · N=1" : ""}`);
-    }
-
-    setStage("policy");
-    pushLog(t0, "policy", "DISQUALIFY budget_sale_wait — I can’t pay for conversion", true);
-
-    setStage("rank");
-    pushLog(t0, "rank", `${OPPORTUNITIES[0].name} ${OPPORTUNITIES[0].score} + ${OPPORTUNITIES[1].name} ${OPPORTUNITIES[1].score}`, true);
-    pushLog(t0, "rank", `model vs my labels ${agree}/${n} (${Math.round((100 * agree) / n)}%)`);
+    pushLog(t0, "rank", `Groq vs my labels ${agree}/${n}`);
 
     return {
       ms: Date.now() - t0,
@@ -172,16 +170,16 @@ export function DiscoveryApp() {
     setLogs([]);
     setDone(null);
     setTick({ i: 0, n: LIVE_BATTERY.length });
+    go("try");
     try {
       setModel(buildVecModel());
       if (!engine?.live) {
-        throw new Error("No model on this host. This page needs the Vercel deploy with GROQ_API_KEY.");
+        throw new Error("No model on this host. Open https://myntra-verdict.vercel.app/discovery/");
       }
       const res = await runLive();
       setDone(res);
-      setStage("rank");
     } catch (e) {
-      setErr(e instanceof Error ? e.message : "Pipeline failed");
+      setErr(e instanceof Error ? e.message : "Extract failed");
     } finally {
       setRunning(false);
     }
@@ -194,9 +192,10 @@ export function DiscoveryApp() {
     setErr(null);
     if (!engine?.live) {
       setResult(null);
-      setErr("Extract is off here. Use the Vercel URL.");
+      setErr("Extract is off here. Open the Vercel URL.");
       return;
     }
+    setCalling(true);
     try {
       const res = await fetch(apiPath("/api/extract"), {
         method: "POST",
@@ -210,6 +209,8 @@ export function DiscoveryApp() {
     } catch (e) {
       setResult(null);
       setErr(e instanceof Error ? e.message : "Extract failed");
+    } finally {
+      setCalling(false);
     }
   }
 
@@ -218,88 +219,32 @@ export function DiscoveryApp() {
       <header className="studio-top">
         <div>
           <p className="hub-kicker">
-            WhyWait
-            {engine == null
-              ? ""
-              : engine.live
-                ? ` · ${engine.provider}/${engine.model}`
-                : " · model not connected"}
+            Part 1 · live model
+            {engine?.live ? ` · ${engine.provider}` : engine ? " · not connected" : ""}
           </p>
-          <h1 className="display sm">Public quotes in. Ranked barriers out.</h1>
+          <h1 className="display sm">Pick a review. Groq says why they didn’t buy.</h1>
+          <p className="hub-lede" style={{ marginTop: 8, maxWidth: 640 }}>
+            This is the AI, not the shop. A click sends the text to <code>POST /api/extract</code>. You should see a
+            barrier (fit, return, sale…). Sale-wait must come back DISQUALIFIED. The 625 / 400 scores on the next tab
+            are from quotes I labelled — Groq does not invent how common something is.
+          </p>
         </div>
         <div className="studio-actions">
-          <button className="primary" type="button" onClick={run} disabled={running || engine == null}>
-            {running ? `Extract ${tick.i}/${tick.n}` : done?.via === "llm" ? "Run again" : "Run extracts"}
-          </button>
-          <button className="secondary" type="button" onClick={() => go("try")}>
-            Test the model
-          </button>
           <button className="ghost" type="button" onClick={tour.open}>
             What’s here
           </button>
-          <a className="secondary" href={LINKS.github} target="_blank" rel="noreferrer">
-            Code
-          </a>
         </div>
       </header>
-
-      <div className="pipe-graph" role="list">
-        {NODES.map((n, i) => (
-          <button
-            key={n.id}
-            type="button"
-            className={`pipe-node ${stage === n.id ? "now" : done && NODES.findIndex((x) => x.id === stage) >= i ? "done" : ""}`}
-            onClick={() => setNode(n.id)}
-          >
-            <span>0{i + 1}</span>
-            <b>{n.t}</b>
-            {i < NODES.length - 1 ? <i /> : null}
-          </button>
-        ))}
-      </div>
-
-      {running ? (
-        <div className="run-meter">
-          <span style={{ width: `${(tick.i / tick.n) * 100}%` }} />
-        </div>
-      ) : null}
-
-      <div className="studio-kpis">
-        <div>
-          <span>Live extracts</span>
-          <b>{running ? tick.i : done?.n ?? "—"}</b>
-        </div>
-        <div>
-          <span>Vocab</span>
-          <b>{model?.vocabSize ?? "—"}</b>
-        </div>
-        <div>
-          <span>LLM ≡ gold</span>
-          <b>{done ? `${done.agreePct}%` : "—"}</b>
-        </div>
-        <div>
-          <span>Runtime</span>
-          <b>{done ? `${done.ms}ms` : running ? "live" : "idle"}</b>
-        </div>
-        <div>
-          <span>Fit score</span>
-          <b>625</b>
-        </div>
-        <div>
-          <span>Sale</span>
-          <b>DISQ</b>
-        </div>
-      </div>
 
       {err ? <p className="callout">{err}</p> : null}
 
       <div className="studio-tabs">
         {(
           [
-            ["board", "Scores"],
-            ["try", "Test the model"],
+            ["try", "Try a quote"],
+            ["board", "My ranking"],
             ["brief", "10 questions"],
-            ["method", "How it works"],
+            ["method", "Prompt"],
           ] as const
         ).map(([id, label]) => (
           <button key={id} type="button" className={panel === id ? "on" : ""} onClick={() => go(id)}>
@@ -308,12 +253,161 @@ export function DiscoveryApp() {
         ))}
       </div>
 
-      {panel === "board" ? (
+      {panel === "try" ? (
         <div className="studio-grid">
           <section className="viz-card">
             <header>
+              <h2>1. Send a quote</h2>
+              <p>Start with Fit freeze, then EORS wait. Or paste any review.</p>
+            </header>
+            <div className="filters">
+              {LIVE_BATTERY.map((s) => (
+                <button
+                  key={s.label}
+                  type="button"
+                  className={`filter ${paste === s.text ? "on" : ""}`}
+                  onClick={() => runQuote(s.text)}
+                  disabled={calling || running || !engine?.live}
+                >
+                  {s.label}
+                  <span className="filter-expect"> → {expectFor(s.gold)}</span>
+                </button>
+              ))}
+            </div>
+            <textarea value={paste} onChange={(e) => setPaste(e.target.value)} rows={6} />
+            <div className="path-ctas" style={{ marginTop: 8 }}>
+              <button
+                className="primary"
+                type="button"
+                disabled={!paste.trim() || !engine?.live || calling || running}
+                onClick={() => runQuote(paste)}
+              >
+                {calling ? "Calling Groq…" : "Send to Groq"}
+              </button>
+              <button className="secondary" type="button" onClick={run} disabled={running || calling || !engine?.live}>
+                {running ? `Checking ${tick.i}/${tick.n}` : "Check all 7 vs my labels"}
+              </button>
+            </div>
+            {!engine?.live ? (
+              <p className="muted" style={{ marginTop: 8 }}>
+                Extract is off here. Open the Vercel URL.
+              </p>
+            ) : (
+              <p className="muted" style={{ marginTop: 8 }}>
+                {engine.provider}/{engine.model}
+                {extractMeta ? ` · last call ${extractMeta.ms}ms` : ""}
+              </p>
+            )}
+          </section>
+
+          <section className="viz-card">
+            {result ? (
+              <>
+                <header>
+                  <h2>2. What Groq returned</h2>
+                  <p>
+                    {result.disqualifiedMonetary
+                      ? "DISQUALIFIED — I can’t solve this by paying the user."
+                      : `${result.intentGuess} intent · ${result.job}`}
+                  </p>
+                </header>
+                <p className="result-barrier">{result.opportunityName}</p>
+                {goldForPaste ? (
+                  <p className={result.barrier === goldForPaste.gold ? "result-match ok" : "result-match miss"}>
+                    {result.barrier === goldForPaste.gold
+                      ? `Matches what I labelled (${expectFor(goldForPaste.gold)}).`
+                      : `I labelled this ${expectFor(goldForPaste.gold)}. Groq said ${SHORT[result.barrier]}.`}
+                  </p>
+                ) : (
+                  <p className="muted">Paste is free-text, so there’s no gold label to check against.</p>
+                )}
+                <p style={{ marginTop: 12 }}>{result.productCall}</p>
+                <details style={{ marginTop: 16 }}>
+                  <summary>JSON from Groq</summary>
+                  <pre className="extract-json">{JSON.stringify(result.extract, null, 2)}</pre>
+                </details>
+              </>
+            ) : (
+              <>
+                <header>
+                  <h2>2. Result lands here</h2>
+                  <p>Click Fit freeze. You should get fit uncertainty, not a star rating.</p>
+                </header>
+                <p className="muted">Nothing sent yet.</p>
+              </>
+            )}
+          </section>
+
+          {shots.length > 0 || running ? (
+            <section className="viz-card span2">
+              <header>
+                <h2>3. Seven labelled quotes</h2>
+                <p>
+                  {running
+                    ? `Live ${tick.i}/${tick.n}.`
+                    : done
+                      ? `${done.agree}/${done.n} matched my labels (${done.agreePct}%). ${done.ms}ms. Ranking scores stay mine.`
+                      : "Each row is one POST /api/extract."}
+                </p>
+              </header>
+              {running ? (
+                <div className="run-meter">
+                  <span style={{ width: `${(tick.i / Math.max(tick.n, 1)) * 100}%` }} />
+                </div>
+              ) : null}
+              <table className="table battery-table">
+                <thead>
+                  <tr>
+                    <th>Sample</th>
+                    <th>I labelled</th>
+                    <th>Groq</th>
+                    <th>Match</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {LIVE_BATTERY.map((s) => {
+                    const hit = shots.find((x) => x.label === s.label);
+                    return (
+                      <tr key={s.label} className={hit ? (hit.ok ? "picked" : "disq") : ""}>
+                        <td>{s.label}</td>
+                        <td>{expectFor(s.gold)}</td>
+                        <td>{hit ? `${SHORT[hit.pred]}${hit.disq ? " · DISQ" : ""}` : running ? "…" : "—"}</td>
+                        <td>{hit ? (hit.ok ? "Yes" : "No") : "—"}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </section>
+          ) : (
+            <section className="viz-card span2">
+              <header>
+                <h2>3. Optional: check all 7</h2>
+                <p>
+                  Same seven samples, one after another. You get a table: my label vs Groq. EORS must DISQ. This is the
+                  batch test — not required if you already tried Fit freeze and EORS.
+                </p>
+              </header>
+            </section>
+          )}
+        </div>
+      ) : null}
+
+      {panel === "board" ? (
+        <div className="studio-grid">
+          <section className="viz-card span2">
+            <header>
+              <h2>These scores are not the model</h2>
+              <p>
+                I coded {stats.n} quotes (F × S × M × N). Groq only labels a quote you send. {model ? `${model.vocabSize} tokens in the overlap check, unused for rank.` : ""}{" "}
+                Click a bar to read evidence.
+              </p>
+            </header>
+          </section>
+          <section className="viz-card">
+            <header>
               <h2>Scores</h2>
-              <p>F × S × M × N. Click a row.</p>
+              <p>Fit 625 picked. Sale 100 shown and refused.</p>
             </header>
             <HBars
               picked={picked}
@@ -322,7 +416,13 @@ export function DiscoveryApp() {
                 id: o.id,
                 label: o.name,
                 value: o.score,
-                note: o.disqualifiedMonetary ? "DISQ" : o.id === "fit_uncertainty" ? "PICKED" : o.id === "return_seal_tag_fear" ? "CO-PRIMARY" : `${shareOf(o.id)}%`,
+                note: o.disqualifiedMonetary
+                  ? "DISQ"
+                  : o.id === "fit_uncertainty"
+                    ? "PICKED"
+                    : o.id === "return_seal_tag_fear"
+                      ? "CO-PRIMARY"
+                      : `${shareOf(o.id)}%`,
                 tone: o.disqualifiedMonetary ? "disq" : o.id === "fit_uncertainty" ? "pick" : undefined,
               }))}
             />
@@ -384,14 +484,7 @@ export function DiscoveryApp() {
           <section className="viz-card span2">
             <header>
               <h2>{opp.name}</h2>
-              <p>
-                {opp.whyScore}{" "}
-                {done
-                  ? done.via === "llm"
-                    ? `This sample set vs my labels: pred ${done.byBarrier.find((b) => b.id === picked)?.pred ?? 0}. Coded n=${done.byBarrier.find((b) => b.id === picked)?.gold ?? 0}.`
-                    : `Predicted ${done.byBarrier.find((b) => b.id === picked)?.pred ?? 0} vs my labels ${done.byBarrier.find((b) => b.id === picked)?.gold ?? 0}.`
-                  : "Run extracts to see Groq on the sample quotes."}
-              </p>
+              <p>{opp.whyScore}</p>
             </header>
             <div className="filters">
               {sources.map((src) => (
@@ -414,75 +507,6 @@ export function DiscoveryApp() {
               ))}
             </div>
           </section>
-
-          <section className="viz-card log-card">
-            <header>
-              <h2>Runtime log</h2>
-              <p>{done?.github ? `${done.github.full_name} · ${done.github.language}` : done?.via === "llm" ? `${done.provider}/${done.llmModel} · POST /api/extract` : "idle"}</p>
-            </header>
-            <pre className="run-log">
-              {logs.length === 0
-                ? "Idle. Run extracts — each sample quote hits POST /api/extract. Sale-wait should DISQUALIFY."
-                : logs.map((l) => `${String(l.at).padStart(4, " ")}ms  [${l.stage}]  ${l.msg}`).join("\n")}
-            </pre>
-          </section>
-        </div>
-      ) : null}
-
-      {panel === "try" ? (
-        <div className="studio-grid">
-          <section className="viz-card">
-            <header>
-              <h2>Test the model</h2>
-              <p>
-                Not a shopper screen. Pick a sample review (or paste one). Groq returns why they didn’t buy the saved
-                item. EORS should be sale-wait / DISQUALIFIED. Fit freeze should be fit.
-                {extractMeta ? ` Last call: ${extractMeta.provider}/${extractMeta.model}, ${extractMeta.ms}ms.` : ""}
-              </p>
-            </header>
-            <div className="filters">
-              {SAMPLE_QUOTES.map((s) => (
-                <button key={s.label} type="button" className="filter" onClick={() => runQuote(s.text)}>
-                  {s.label}
-                </button>
-              ))}
-            </div>
-            <textarea value={paste} onChange={(e) => setPaste(e.target.value)} rows={6} />
-            <button className="primary" type="button" style={{ marginTop: 8, maxWidth: 280 }} disabled={!paste.trim() || !engine?.live} onClick={() => runQuote(paste)}>
-              Send to Groq
-            </button>
-            {!engine?.live ? (
-              <p className="muted" style={{ marginTop: 8 }}>
-                Extract is off here. Open the Vercel URL.
-              </p>
-            ) : null}
-          </section>
-          <section className="viz-card">
-            {result ? (
-              <>
-                <header>
-                  <h2>{result.opportunityName}</h2>
-                  <p>
-                    {result.disqualifiedMonetary
-                      ? "DISQUALIFIED — I can’t solve this by paying the user."
-                      : `${result.intentGuess} intent · ${result.job}`}
-                  </p>
-                </header>
-                <p>{result.productCall}</p>
-                <details style={{ marginTop: 16 }}>
-                  <summary>JSON Groq returned</summary>
-                  <pre className="extract-json">{JSON.stringify(result.extract, null, 2)}</pre>
-                </details>
-              </>
-            ) : (
-              <>
-                <header>
-                  <h2>No result yet</h2>
-                  <p>Start with Fit freeze or EORS wait.</p>
-                </header>
-              </>
-            )}
-          </section>
         </div>
       ) : null}
 
@@ -491,31 +515,25 @@ export function DiscoveryApp() {
       {panel === "method" ? (
         <div className="tab-body" style={{ marginTop: 12 }}>
           <p>
-            Groq gets <code>extract-prompt.md</code> as the system prompt and returns JSON. If the barrier is
-            sale-wait, I force DISQUALIFY even if the model hedges. F×S×M×N stays on the quotes I coded — the model
-            doesn’t get to invent how common something is.
+            Each Try-a-quote click is one Groq call. System prompt is <a href={LINKS.extractPrompt}>extract-prompt.md</a>
+            . JSON fields: job, barrier, intent, workaround, severity, metricProximity, productCall. If Groq says
+            sale-wait or EORS, I force DISQUALIFY. Frequency for the ranking is from the coded panel, not from the
+            model.
           </p>
+          <ol className="method-steps">
+            <li>You send a quote.</li>
+            <li>Groq returns a barrier.</li>
+            <li>Policy: sale-wait → DISQUALIFY.</li>
+            <li>I still rank opportunities from the 205 labelled quotes (fit 625, return 400, sale 100 DISQ).</li>
+          </ol>
           <p style={{ marginTop: 12 }}>
-            Prompt: <a href={LINKS.extractPrompt}>extract-prompt.md</a>
-            {" · "}
-            Code:{" "}
-            <a href={LINKS.github} target="_blank" rel="noreferrer">
-              {LINKS.github.replace("https://", "")}
-            </a>
-            {engine?.live ? ` · ${engine.provider}/${engine.model}` : " · no model on this host"}
+            {engine?.live ? `${engine.provider}/${engine.model}` : "no model on this host"}
+            {logs.length ? ` · last batch log ${logs.length} lines` : ""}
           </p>
+          {logs.length ? <pre className="run-log">{logs.map((l) => `${String(l.at).padStart(4, " ")}ms  ${l.msg}`).join("\n")}</pre> : null}
           <pre className="extract-json">{EXTRACT_PROMPT}</pre>
           <SegmentsPanel />
         </div>
-      ) : null}
-
-      {node ? (
-        <Modal kicker="Pipeline node" title={NODES.find((n) => n.id === node)!.t} onClose={() => setNode(null)}>
-          <p>{NODES.find((n) => n.id === node)!.d}</p>
-          <p className="muted" style={{ marginTop: 12 }}>
-            Run extracts: ingest → vector → Groq → score → policy → rank.
-          </p>
-        </Modal>
       ) : null}
     </div>
   );

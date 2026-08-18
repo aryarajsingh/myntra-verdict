@@ -3,7 +3,7 @@ export const FLOW = [
     id: "discovery",
     href: "/discovery/",
     label: "Discovery",
-    blurb: "Score public reviews. Groq extracts quotes. Test the model on a sample.",
+    blurb: "Try a review. Groq returns why they didn’t buy. Fit freeze, then EORS (must DISQ).",
     time: "8 min",
   },
   {
@@ -16,8 +16,8 @@ export const FLOW = [
   {
     id: "wishlist",
     href: "/wishlist/",
-    label: "Wishlist",
-    blurb: "Ready / Check fit / Still exploring. Open Verdict on a Check fit item.",
+    label: "MVP",
+    blurb: "The product: a wishlist with Verdict. Open a Check fit card.",
     time: "5 min",
   },
   {

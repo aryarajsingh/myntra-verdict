@@ -29,7 +29,7 @@ export function artefacts(): Artefact[] {
       id: "03",
       part: "Part 5",
       title: "Wishlist MVP",
-      body: "Ready / Check fit / Still exploring. No coupons.",
+      body: "The product. Nav label is MVP. Open Check fit → See Verdict.",
       href: "/wishlist/",
       kind: "Live",
     },

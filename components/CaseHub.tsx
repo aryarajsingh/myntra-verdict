@@ -4,7 +4,6 @@ import Link from "next/link";
 import { ThinkingEvo } from "@/components/ThinkingEvo";
 import { Funnel, HBars } from "@/components/Viz";
 import { FLOW } from "@/lib/flow";
-import { LINKS } from "@/lib/links";
 import { useTour } from "@/components/LayoutTour";
 import { OPPORTUNITIES } from "@/data/opportunities";
 import { corpusStats } from "@/lib/stats";
@@ -24,15 +23,15 @@ export function CaseHub() {
       </p>
 
       <div className="path-ctas hub-start">
-        <Link href="/discovery/" className="primary">
-          Discovery
+        <Link href="/discovery/#try" className="primary">
+          Try the model
+        </Link>
+        <Link href="/wishlist/" className="secondary">
+          Open the MVP
         </Link>
         <button className="secondary" type="button" onClick={tour.open}>
           What’s on this site
         </button>
-        <a href={LINKS.github} className="secondary" target="_blank" rel="noreferrer">
-          GitHub
-        </a>
       </div>
 
       <div className="hub-viz">
@@ -40,8 +39,8 @@ export function CaseHub() {
           <header>
             <h2>What I ranked</h2>
             <p>
-              {stats.n} quotes. {stats.genuinePct}% look like real intent. {stats.offPct}% decide off-app. Open Discovery
-              to run the model on sample quotes.
+              {stats.n} quotes. {stats.genuinePct}% look like real intent. {stats.offPct}% decide off-app. Discovery is
+              where you send a review to Groq. MVP is the wishlist product.
             </p>
           </header>
           <HBars
@@ -59,8 +58,8 @@ export function CaseHub() {
         </section>
         <section className="viz-card">
           <header>
-            <h2>Pages</h2>
-            <p>Discovery, research, wishlist MVP, 10-slide deck.</p>
+            <h2>What to open</h2>
+            <p>Four jobs. Discovery is the model. MVP is the product.</p>
           </header>
           <Funnel
             steps={FLOW.map((s) => ({

@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { createContext, useContext, useState } from "react";
 import { FLOW } from "@/lib/flow";
-import { LINKS } from "@/lib/links";
 import { Modal } from "@/components/Modal";
 
 const TourCtx = createContext<{ open: () => void }>({ open: () => {} });
@@ -14,15 +13,15 @@ export function useTour() {
 const STEPS = [
   {
     t: "This URL is the submission",
-    d: "Nav is Discovery, Research, Wishlist, Deck. Files and the PDF are in the footer. Not the Myntra app.",
+    d: "Four tabs: Discovery (the model), Research (interviews), MVP (the product — a wishlist), Deck (10 slides). Not the Myntra app.",
   },
   {
-    t: "Discovery runs a real model",
-    d: "Click Run extracts. Each sample quote hits POST /api/extract on Groq. Then open Test the model and try EORS (should DISQUALIFY) and Fit freeze.",
+    t: "Discovery is how you test the model",
+    d: "You land on Try a quote. Click Fit freeze — Groq should return fit. Then EORS wait — it must come back sale-wait and DISQUALIFIED. The result card is the output. Optional: Check all 7 vs my labels.",
   },
   {
-    t: "Then research, then the MVP",
-    d: "Research is the six rooms, a survey link, charts, and the takeaway. Wishlist is the product — open a Check fit item and tap See Verdict.",
+    t: "MVP is the wishlist product",
+    d: "Not more research. Saved items sit in Ready / Check fit / Still exploring. Open a Check fit card (blazer or Anarkali) and tap See Verdict. That card is the intervention.",
   },
   {
     t: "Deck is 10 slides",
@@ -70,13 +69,10 @@ export function TourProvider({ children }: { children: React.ReactNode }) {
                 Next
               </button>
             ) : (
-              <Link href="/discovery/" className="primary" onClick={close}>
-                Discovery
+              <Link href="/discovery/#try" className="primary" onClick={close}>
+                Try a quote
               </Link>
             )}
-            <a href={LINKS.github} className="secondary" target="_blank" rel="noreferrer">
-              GitHub
-            </a>
             <button className="ghost" type="button" onClick={close}>
               Close
             </button>

@@ -215,6 +215,22 @@ p {
   border-right: 1px solid var(--hairline);
 }
 
+.mvp-strip {
+  max-width: 430px;
+  margin: 12px auto 0;
+  padding: 0 12px;
+}
+
+.mvp-strip p {
+  margin: 0;
+  background: var(--status-fit-tint);
+  border: 1px solid #efd3a8;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
 .wide-shell {
   max-width: 1200px;
   margin: 0 auto;
@@ -658,6 +674,47 @@ p {
   background: var(--ink);
   color: #fff;
   border-color: var(--ink);
+}
+
+.filter-expect {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+.result-barrier {
+  font-family: var(--display);
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 4px 0 10px;
+}
+
+.result-match {
+  font-size: 14px;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.result-match.ok {
+  background: var(--page-sunken);
+}
+
+.result-match.miss {
+  background: var(--status-fit-tint);
+}
+
+.method-steps {
+  margin: 16px 0 16px 20px;
+}
+
+.method-steps li {
+  margin: 6px 0;
+}
+
+.battery-table {
+  margin-top: 8px;
 }
 
 .quote {

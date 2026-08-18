@@ -7,6 +7,7 @@ import type { Bucket, Profile } from "@/data/types";
 import { ProductArt } from "./ProductArt";
 import { PolicyChip, StatusChip } from "./StatusChip";
 import { DEFAULT_STATE, DEMO_PROFILE, effectiveBucket, loadState, saveState, track, type AppState } from "@/lib/state";
+import { MvpStrip } from "@/components/MvpStrip";
 
 const TOPS = ["XS", "S", "M", "L", "XL", "XXL"];
 const HEIGHTS = [
@@ -40,7 +41,6 @@ export function WishlistHome() {
   const [step, setStep] = useState<0 | 1 | 2 | 3 | 4>(0);
   const [draft, setDraft] = useState<Partial<Profile>>(DEMO_PROFILE);
   const [filter, setFilter] = useState<"all" | Bucket>("all");
-  const [hint, setHint] = useState(true);
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -188,27 +188,19 @@ export function WishlistHome() {
   }
 
   const groups: { id: Bucket; title: string; sub: string }[] = [
+    { id: "check_fit", title: "Check fit", sub: "Size or length is mixed. This is the one to open." },
     { id: "ready", title: "Ready", sub: "Fit read is aligned. Return path is clear. Still not a guarantee." },
-    { id: "check_fit", title: "Check fit", sub: "Size or length is mixed. Open Verdict before you bag." },
-    { id: "exploring", title: "Still exploring", sub: "Looks like a bookmark, a maybe-occasion, or a piece we won’t push." },
+    { id: "exploring", title: "Still exploring", sub: "Bookmark / moodboard. No bag CTA." },
   ];
 
   const filtered = visible.filter((x) => filter === "all" || x.bucket === filter);
 
   return (
-    <div className="app-shell">
+    <>
+      <MvpStrip />
+      <div className="app-shell">
       <Header bagCount={state.bag.length} />
       <div className="pad">
-        {hint ? (
-          <p className="hint-bar">
-            <span>
-              Try a <b>Check fit</b> piece — blazer or Anarkali — and open Verdict.
-            </span>
-            <button type="button" onClick={() => setHint(false)} aria-label="Dismiss">
-              ×
-            </button>
-          </p>
-        ) : null}
         <div className="wl-meta">
           <p>
             {visible.length} saved · Tops {state.profile?.top} · Bottoms {state.profile?.bottom} · Ethnic{" "}
@@ -268,5 +260,6 @@ export function WishlistHome() {
         </div>
       ) : null}
     </div>
+    </>
   );
 }

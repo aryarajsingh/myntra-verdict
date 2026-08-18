@@ -13,13 +13,13 @@ const NEXT: Record<string, { href: string; title: string; body: string }> = {
   },
   research: {
     href: "/wishlist/",
-    title: "Wishlist",
-    body: "Open a Check fit item (blazer or Anarkali) → See Verdict.",
+    title: "MVP",
+    body: "The product. Open a Check fit item → See Verdict.",
   },
   wishlist: {
     href: "/deck/",
     title: "Deck",
-    body: "Ten slides. PDF is on the page.",
+    body: "Ten slides that argue for this wishlist product.",
   },
   deck: {
     href: "/docs/",
@@ -27,9 +27,9 @@ const NEXT: Record<string, { href: string; title: string; body: string }> = {
     body: "Prompt, interviews, survey, workbook, PDF.",
   },
   files: {
-    href: "/discovery/",
+    href: "/discovery/#try",
     title: "Discovery",
-    body: "If you want to try another quote.",
+    body: "Send Fit freeze, then EORS wait.",
   },
 };
 
